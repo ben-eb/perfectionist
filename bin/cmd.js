@@ -37,7 +37,5 @@ read(file, function (err, buf) {
     if (out) {
         opts.to = out;
     }
-    perfectionist.process(String(buf), opts).then(function (result) {
-        write(result.css);
-    });
+    write(out, String(perfectionist.process(String(buf), opts)));
 });
