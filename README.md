@@ -97,7 +97,7 @@ to cover it.
 
 ## License
 
-MIT © [](http://beneb.info)
+MIT © [Ben Briggs](http://beneb.info)
 
 [ci]:      https://travis-ci.org/ben-eb/perfectionist
 [cssnano]: https://github.com/ben-eb/cssnano
