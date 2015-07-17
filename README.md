@@ -45,13 +45,13 @@ h1{color:red}
 
 #### options
 
-##### style
+##### format
 
 Type: `string`
 Default: `expanded`
 
 Pass either `expanded`, `compact` or `compressed`. Note that the `compressed`
-style only facilitates simple whitespace compression around selectors &
+format only facilitates simple whitespace compression around selectors &
 declarations. For more powerful compression, see [cssnano].
 
 ##### maxSelectorLength
