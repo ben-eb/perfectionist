@@ -1,0 +1,8 @@
+h1 {
+       -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
+            border-radius: 12px;
+    -webkit-box-shadow: 0 1px 3px black;
+       -moz-box-shadow: 0 1px 3px black;
+            box-shadow: 0 1px 3px black;
+}

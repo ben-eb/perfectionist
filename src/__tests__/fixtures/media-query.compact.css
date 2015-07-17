@@ -1,0 +1,4 @@
+@media screen and (min-width: 500px) {
+ h1 { color: navy; background: #fff; border-radius: 12px; }
+ h2 { text-decoration: underline; }
+}
