@@ -80,7 +80,10 @@ function applyExpanded (css, opts) {
                 let vendor = prefix.prop.replace(base, '').length;
                 rule.nodes.filter(({prop}) => ~prop.indexOf(base)).forEach(decl => {
                     let thisVendor = decl.prop.replace(base, '').length;
-                    decl.before = space(vendor - thisVendor) + decl.before;
+                    let extraSpace = vendor - thisVendor;
+                    if (extraSpace > 0) {
+                        decl.before = space(extraSpace) + decl.before;
+                    }
                 });
             });
         }
