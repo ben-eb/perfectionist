@@ -25,6 +25,12 @@ function applyCompressed (css) {
 
 function applyCompact (css, opts) {
     css.eachInside(rule => {
+        if (rule.type === 'comment') {
+            if (rule.prev().type === 'decl') {
+                rule.before = ' ' + rule.before;
+            }
+            return;
+        }
         let indent = getIndent(rule, 1);
         let deep = deeplyNested(rule);
         if (rule.type === 'rule' || rule.type === 'atrule') {
@@ -56,6 +62,12 @@ function applyCompact (css, opts) {
 
 function applyExpanded (css, opts) {
     css.eachInside(rule => {
+        if (rule.type === 'comment') {
+            if (rule.prev().type === 'decl') {
+                rule.before = ' ' + rule.before;
+            }
+            return;
+        }
         let indent = getIndent(rule);
         rule.before = indent + rule.before;
         if (rule.type === 'rule' || rule.type === 'atrule') {
@@ -78,7 +90,7 @@ function applyExpanded (css, opts) {
             prefixed.forEach(prefix => {
                 let base = unprefix(prefix.prop);
                 let vendor = prefix.prop.replace(base, '').length;
-                rule.nodes.filter(({prop}) => ~prop.indexOf(base)).forEach(decl => {
+                rule.nodes.filter(({prop}) => prop && ~prop.indexOf(base)).forEach(decl => {
                     let thisVendor = decl.prop.replace(base, '').length;
                     let extraSpace = vendor - thisVendor;
                     if (extraSpace > 0) {
