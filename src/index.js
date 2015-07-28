@@ -26,8 +26,14 @@ function applyCompressed (css) {
 function applyCompact (css, opts) {
     css.eachInside(rule => {
         if (rule.type === 'comment') {
-            if (rule.prev().type === 'decl') {
+            if (rule.prev() && rule.prev().type === 'decl') {
                 rule.before = ' ' + rule.before;
+            }
+            if (rule.parent && rule.parent.type === 'root') {
+                rule.next().before = '\n';
+                if (rule !== css.first) {
+                    rule.before = '\n';
+                }
             }
             return;
         }
@@ -63,8 +69,14 @@ function applyCompact (css, opts) {
 function applyExpanded (css, opts) {
     css.eachInside(rule => {
         if (rule.type === 'comment') {
-            if (rule.prev().type === 'decl') {
+            if (rule.prev() && rule.prev().type === 'decl') {
                 rule.before = ' ' + rule.before;
+            }
+            if (rule.parent && rule.parent.type === 'root') {
+                rule.next().before = '\n\n';
+                if (rule !== css.first) {
+                    rule.before = '\n\n';
+                }
             }
             return;
         }

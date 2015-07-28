@@ -1,3 +1,8 @@
+# 1.1.0
+
+* Adds support for newlines around block comments in both `expanded` and
+  `compact` formats.
+
 # 1.0.2
 
 * Fixes a crash on comments inside rules.
