@@ -27,6 +27,12 @@ function splitProperty (rule, prop, max, reindent = false) {
     }
 }
 
+export function maxAtRuleLength (rule, {maxAtRuleLength: max}) {
+    return splitProperty(rule, 'params', max, function (rule) {
+        return rule.name.length + 2;
+    });
+}
+
 export function maxSelectorLength (rule, {maxSelectorLength: max}) {
     return splitProperty(rule, 'selector', max);
 }

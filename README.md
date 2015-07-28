@@ -54,6 +54,16 @@ Pass either `expanded`, `compact` or `compressed`. Note that the `compressed`
 format only facilitates simple whitespace compression around selectors &
 declarations. For more powerful compression, see [cssnano].
 
+##### maxAtRuleLength
+
+Type: `boolean|number`
+Default: `80`
+
+If set to a positive integer, set a maximum width for at-rule parameters; if
+they exceed this, they will be split up over multiple lines. If false, this
+behaviour will not be performed. Note that this transform is excluded from the
+`compressed` & `compact` formats.
+
 ##### maxSelectorLength
 
 Type: `boolean|number`

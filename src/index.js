@@ -4,7 +4,7 @@ import postcss from 'postcss';
 import deeplyNested from './deeplyNested';
 import getIndent from './getIndent';
 import longest from './longest';
-import {maxSelectorLength, maxValueLength} from './maxSelectorLength';
+import {maxAtRuleLength, maxSelectorLength, maxValueLength} from './maxSelectorLength';
 import prefixedDecls from './prefixedDecls';
 import space from './space';
 
@@ -112,6 +112,10 @@ function applyExpanded (css, opts) {
             });
         }
         maxSelectorLength(rule, opts);
+        if (rule.type === 'atrule') {
+            if (rule.params) { rule.afterName = ' '; }
+            maxAtRuleLength(rule, opts);
+        }
         if (rule.type === 'decl') {
             rule.between = ': ';
             maxValueLength(rule, opts);
@@ -129,6 +133,7 @@ function applyExpanded (css, opts) {
 
 let perfectionist = postcss.plugin('perfectionist', ({
     format = 'expanded',
+    maxAtRuleLength = 80,
     maxSelectorLength = 80,
     maxValueLength = 80
 } = {}) => {
@@ -141,6 +146,7 @@ let perfectionist = postcss.plugin('perfectionist', ({
         switch (format) {
             case 'compact':
                 applyCompact(css, {
+                    maxAtRuleLength: maxAtRuleLength,
                     maxSelectorLength: maxSelectorLength,
                     maxValueLength: maxValueLength
                 });
@@ -150,6 +156,7 @@ let perfectionist = postcss.plugin('perfectionist', ({
                 break;
             case 'expanded':
                 applyExpanded(css, {
+                    maxAtRuleLength: maxAtRuleLength,
                     maxSelectorLength: maxSelectorLength,
                     maxValueLength: maxValueLength
                 });
