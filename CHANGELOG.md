@@ -1,9 +1,7 @@
-# *current*
+# 1.2.0
 
 * Adds support for configurable wrapping of property values over multiple lines.
 * Adds support for configurable wrapping of at-rule parameters.
-
----
 
 # 1.1.0
 
