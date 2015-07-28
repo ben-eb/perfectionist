@@ -4,7 +4,7 @@ import postcss from 'postcss';
 import deeplyNested from './deeplyNested';
 import getIndent from './getIndent';
 import longest from './longest';
-import maxSelectorLength from './maxSelectorLength';
+import {maxSelectorLength, maxValueLength} from './maxSelectorLength';
 import prefixedDecls from './prefixedDecls';
 import space from './space';
 
@@ -113,16 +113,8 @@ function applyExpanded (css, opts) {
         }
         maxSelectorLength(rule, opts);
         if (rule.type === 'decl') {
-            rule.before = rule.before;
             rule.between = ': ';
-            let values = comma(rule.value);
-            if (values.length > 1) {
-                rule.value = values.map((value, index) => {
-                    if (!index) { return value; }
-                    let align = space((rule.prop + rule.before).length + 2);
-                    return `\n${align}${value}`;
-                }).join(',');
-            }
+            maxValueLength(rule, opts);
         }
         if (rule.parent && rule.parent.type !== 'root') {
             rule.before = '\n' + rule.before;
@@ -137,7 +129,8 @@ function applyExpanded (css, opts) {
 
 let perfectionist = postcss.plugin('perfectionist', ({
     format = 'expanded',
-    maxSelectorLength = 80
+    maxSelectorLength = 80,
+    maxValueLength = 80
 } = {}) => {
     return (css, result) => {
         css.eachInside(rule => {
@@ -147,13 +140,19 @@ let perfectionist = postcss.plugin('perfectionist', ({
         });
         switch (format) {
             case 'compact':
-                applyCompact(css, {maxSelectorLength: maxSelectorLength});
+                applyCompact(css, {
+                    maxSelectorLength: maxSelectorLength,
+                    maxValueLength: maxValueLength
+                });
                 break;
             case 'compressed':
                 applyCompressed(css);
                 break;
             case 'expanded':
-                applyExpanded(css, {maxSelectorLength: maxSelectorLength});
+                applyExpanded(css, {
+                    maxSelectorLength: maxSelectorLength,
+                    maxValueLength: maxValueLength
+                });
                 break;
         }
     }

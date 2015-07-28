@@ -62,7 +62,17 @@ Default: `80`
 If set to a positive integer, set a maximum width for a selector string; if
 it exceeds this, it will be split up over multiple lines. If false, this
 behaviour will not be performed. Note that this transform is excluded from the
-`compressed` style.
+`compressed` format.
+
+##### maxValueLength
+
+Type: `boolean|number`
+Default: `80`
+
+If set to a positive integer, set a maximum width for a property value; if
+it exceeds this, it will be split up over multiple lines. If false, this
+behaviour will not be performed. Note that this transform is excluded from the
+`compressed` & `compact` formats.
 
 ##### sourcemap
 

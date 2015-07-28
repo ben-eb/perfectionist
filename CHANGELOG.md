@@ -1,3 +1,9 @@
+# *current*
+
+* Adds support for configurable wrapping of property values over multiple lines.
+
+---
+
 # 1.1.0
 
 * Adds support for newlines around block comments in both `expanded` and
