@@ -7,8 +7,8 @@ import longest from './longest';
 import {maxAtRuleLength, maxSelectorLength, maxValueLength} from './maxSelectorLength';
 import prefixedDecls from './prefixedDecls';
 import space from './space';
+import assign from 'object-assign';
 
-let comma = postcss.list.comma;
 let unprefix = postcss.vendor.unprefixed;
 
 function applyCompressed (css) {
@@ -131,44 +131,37 @@ function applyExpanded (css, opts) {
     css.after = '\n';
 }
 
-let perfectionist = postcss.plugin('perfectionist', ({
-    format = 'expanded',
-    maxAtRuleLength = 80,
-    maxSelectorLength = 80,
-    maxValueLength = 80
-} = {}) => {
-    return (css, result) => {
+let perfectionist = postcss.plugin('perfectionist', opts => {
+    opts = assign({
+        format: 'expanded',
+        maxAtRuleLength: 80,
+        maxSelectorLength: 80,
+        maxValueLength: 80
+    }, opts);
+    return css => {
         css.eachInside(rule => {
             if (rule.before) {
                 rule.before = rule.before.replace(/[;\s]/g, '');
             }
         });
-        switch (format) {
+        switch (opts.format) {
             case 'compact':
-                applyCompact(css, {
-                    maxAtRuleLength: maxAtRuleLength,
-                    maxSelectorLength: maxSelectorLength,
-                    maxValueLength: maxValueLength
-                });
+                applyCompact(css, opts);
                 break;
             case 'compressed':
                 applyCompressed(css);
                 break;
             case 'expanded':
-                applyExpanded(css, {
-                    maxAtRuleLength: maxAtRuleLength,
-                    maxSelectorLength: maxSelectorLength,
-                    maxValueLength: maxValueLength
-                });
+                applyExpanded(css, opts);
                 break;
         }
-    }
+    };
 });
 
 perfectionist.process = (css, opts = {}) => {
     opts.map = opts.map || (opts.sourcemap ? true : null);
     let processor = postcss([ perfectionist(opts) ]);
     return processor.process(css, opts);
-}
+};
 
 export default perfectionist;

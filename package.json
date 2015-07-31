@@ -34,6 +34,7 @@
   "repository": "ben-eb/perfectionist",
   "dependencies": {
     "minimist": "^1.1.1",
+    "object-assign": "^3.0.0",
     "postcss": "^4.1.15",
     "read-file-stdin": "^0.2.0",
     "string.prototype.repeat": "^0.2.0",
