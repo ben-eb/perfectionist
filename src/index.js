@@ -8,14 +8,17 @@ import {maxAtRuleLength, maxSelectorLength, maxValueLength} from './maxSelectorL
 import prefixedDecls from './prefixedDecls';
 import space from './space';
 import assign from 'object-assign';
+import {block as commentRegex} from 'comment-regex';
 
 let unprefix = postcss.vendor.unprefixed;
 
 function applyCompressed (css) {
     css.eachInside(rule => {
-        rule.between = rule.after = '';
         rule.semicolon = false;
-        if (rule.type === 'decl') {
+        if (rule.type === 'rule' || rule.type === 'atrule') {
+            rule.between = rule.after = '';
+        }
+        if (rule.type === 'decl' && !commentRegex().test(rule.between)) {
             rule.between = ':';
         }
     });
@@ -51,7 +54,9 @@ function applyCompact (css, opts) {
             } else {
                 rule.before = ' ' + rule.before;
             }
-            rule.between = ': ';
+            if (!commentRegex().test(rule.between)) {
+                rule.between = ': ';
+            }
         }
         if ((deep || rule.nodes) && rule !== css.first) {
             rule.before = '\n ';
@@ -117,7 +122,9 @@ function applyExpanded (css, opts) {
             maxAtRuleLength(rule, opts);
         }
         if (rule.type === 'decl') {
-            rule.between = ': ';
+            if (!commentRegex().test(rule.between)) {
+                rule.between = ': ';
+            }
             maxValueLength(rule, opts);
         }
         if (rule.parent && rule.parent.type !== 'root') {
@@ -139,9 +146,9 @@ let perfectionist = postcss.plugin('perfectionist', opts => {
         maxValueLength: 80
     }, opts);
     return css => {
-        css.eachInside(rule => {
-            if (rule.before) {
-                rule.before = rule.before.replace(/[;\s]/g, '');
+        css.eachInside(node => {
+            if (node.before) {
+                node.before = node.before.replace(/[;\s]/g, '');
             }
         });
         switch (opts.format) {

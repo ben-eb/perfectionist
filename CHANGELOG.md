@@ -1,3 +1,7 @@
+# 1.2.1
+
+* Fixes an issue where comments were being removed from inside nodes.
+
 # 1.2.0
 
 * Adds support for configurable wrapping of property values over multiple lines.

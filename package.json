@@ -33,6 +33,7 @@
   },
   "repository": "ben-eb/perfectionist",
   "dependencies": {
+    "comment-regex": "^1.0.0",
     "minimist": "^1.1.3",
     "object-assign": "^3.0.0",
     "postcss": "^4.1.16",
