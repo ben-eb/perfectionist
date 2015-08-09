@@ -1,3 +1,7 @@
+# 1.2.2
+
+* Fixes a crash when a comment ended the file.
+
 # 1.2.1
 
 * Fixes an issue where comments were being removed from inside nodes.

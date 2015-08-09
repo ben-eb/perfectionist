@@ -33,7 +33,10 @@ function applyCompact (css, opts) {
                 rule.before = ' ' + rule.before;
             }
             if (rule.parent && rule.parent.type === 'root') {
-                rule.next().before = '\n';
+                let next = rule.next();
+                if (next) {
+                    next.before = '\n';
+                }
                 if (rule !== css.first) {
                     rule.before = '\n';
                 }
@@ -78,7 +81,10 @@ function applyExpanded (css, opts) {
                 rule.before = ' ' + rule.before;
             }
             if (rule.parent && rule.parent.type === 'root') {
-                rule.next().before = '\n\n';
+                let next = rule.next();
+                if (next) {
+                    next.before = '\n\n';
+                }
                 if (rule !== css.first) {
                     rule.before = '\n\n';
                 }
