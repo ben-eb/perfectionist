@@ -9,6 +9,7 @@ import prefixedDecls from './prefixedDecls';
 import space from './space';
 import assign from 'object-assign';
 import {block as commentRegex} from 'comment-regex';
+import sameLine from './sameLine';
 
 let unprefix = postcss.vendor.unprefixed;
 
@@ -29,7 +30,8 @@ function applyCompressed (css) {
 function applyCompact (css, opts) {
     css.eachInside(rule => {
         if (rule.type === 'comment') {
-            if (rule.prev() && rule.prev().type === 'decl') {
+            let prev = rule.prev();
+            if (prev && prev.type === 'decl') {
                 rule.before = ' ' + rule.before;
             }
             if (rule.parent && rule.parent.type === 'root') {
@@ -76,9 +78,15 @@ function applyCompact (css, opts) {
 
 function applyExpanded (css, opts) {
     css.eachInside(rule => {
+        let indent = getIndent(rule);
         if (rule.type === 'comment') {
-            if (rule.prev() && rule.prev().type === 'decl') {
-                rule.before = ' ' + rule.before;
+            let prev = rule.prev();
+            if (prev && prev.type === 'decl') {
+                if (sameLine(prev, rule)) {
+                    rule.before = ' ' + rule.before;
+                } else {
+                    rule.before = '\n' + indent + rule.before;
+                }
             }
             if (rule.parent && rule.parent.type === 'root') {
                 let next = rule.next();
@@ -91,7 +99,6 @@ function applyExpanded (css, opts) {
             }
             return;
         }
-        let indent = getIndent(rule);
         rule.before = indent + rule.before;
         if (rule.type === 'rule' || rule.type === 'atrule') {
             rule.between = ' ';

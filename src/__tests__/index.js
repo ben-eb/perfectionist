@@ -1,7 +1,6 @@
 "use strict";
 
 import test from 'tape';
-import postcss from 'postcss';
 import plugin from '../';
 import path from 'path';
 import fs from 'fs';
@@ -9,7 +8,7 @@ import fs from 'fs';
 let base = path.join(__dirname, 'fixtures');
 
 function perfectionist (css, options) {
-    return postcss([ plugin(options) ]).process(css).css;
+    return plugin.process(css, options).css;
 }
 
 let specs = fs.readdirSync(base).reduce((tests, css) => {
