@@ -54,6 +54,14 @@ Pass either `expanded`, `compact` or `compressed`. Note that the `compressed`
 format only facilitates simple whitespace compression around selectors &
 declarations. For more powerful compression, see [cssnano].
 
+##### indentSize
+
+Type: `number`
+Default: `4`
+
+This number will be used as a basis for all indent levels, using the `expanded`
+format.
+
 ##### maxAtRuleLength
 
 Type: `boolean|number`

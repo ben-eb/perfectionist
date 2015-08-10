@@ -78,7 +78,7 @@ function applyCompact (css, opts) {
 
 function applyExpanded (css, opts) {
     css.eachInside(rule => {
-        let indent = getIndent(rule);
+        let indent = getIndent(rule, opts.indentSize);
         if (rule.type === 'comment') {
             let prev = rule.prev();
             if (prev && prev.type === 'decl') {
@@ -154,6 +154,7 @@ function applyExpanded (css, opts) {
 let perfectionist = postcss.plugin('perfectionist', opts => {
     opts = assign({
         format: 'expanded',
+        indentSize: 4,
         maxAtRuleLength: 80,
         maxSelectorLength: 80,
         maxValueLength: 80
