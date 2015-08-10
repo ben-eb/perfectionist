@@ -29,6 +29,7 @@ function applyCompressed (css) {
 
 function applyCompact (css, opts) {
     css.eachInside(rule => {
+        opts.indentSize = 1;
         if (rule.type === 'comment') {
             let prev = rule.prev();
             if (prev && prev.type === 'decl') {
@@ -45,7 +46,7 @@ function applyCompact (css, opts) {
             }
             return;
         }
-        let indent = getIndent(rule, 1);
+        let indent = getIndent(rule, opts.indentSize);
         let deep = deeplyNested(rule);
         if (rule.type === 'rule' || rule.type === 'atrule') {
             rule.between = rule.after = ' ';

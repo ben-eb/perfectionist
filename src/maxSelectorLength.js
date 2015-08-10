@@ -3,20 +3,29 @@
 import {list} from 'postcss';
 import space from './space';
 import getIndent from './getIndent';
+import assign from 'object-assign';
 
-function splitProperty (rule, prop, max, reindent = false) {
+function splitProperty (rule, prop, opts) {
+    opts = assign({
+        reindent: false
+    }, opts);
+    let max = opts.max;
     if (!max) { return; }
     let property = rule[prop];
     if (property && property.length > max) {
         let exploded = list.comma(property);
         let indent = 0;
-        if (typeof reindent === 'function') {
-            indent = reindent(rule);
+        if (typeof opts.reindent === 'function') {
+            indent = opts.reindent(rule);
         }
         rule[prop] = exploded.reduce((lines, chunk) => {
-            if (lines[lines.length - 1].length + reindent <= max) {
+            if (opts.breakEvery) {
+                lines.push(chunk);
+                return lines;
+            }
+            if (lines[lines.length - 1].length + indent <= max) {
                 let merged = lines[lines.length - 1] + ', ' + chunk;
-                if (merged.length <= max) {
+                if (indent + merged.length <= max) {
                     lines[lines.length - 1] = merged;
                     return lines;
                 }
@@ -28,17 +37,30 @@ function splitProperty (rule, prop, max, reindent = false) {
 }
 
 export function maxAtRuleLength (rule, {maxAtRuleLength: max}) {
-    return splitProperty(rule, 'params', max, function (rule) {
-        return rule.name.length + 2;
+    return splitProperty(rule, 'params', {
+        max: max,
+        breakEvery: true,
+        reindent: function (rule) {
+            return rule.name.length + 2;
+        }
     });
 }
 
-export function maxSelectorLength (rule, {maxSelectorLength: max}) {
-    return splitProperty(rule, 'selector', max);
+export function maxSelectorLength (rule, opts) {
+    return splitProperty(rule, 'selector', {
+        max: opts.maxSelectorLength,
+        reindent: function (rule) {
+            return getIndent(rule, opts.indentSize).length;
+        }
+    });
 }
 
 export function maxValueLength (rule, {maxValueLength: max}) {
-    return splitProperty(rule, 'value', max, function (rule) {
-        return getIndent(rule).length + rule.prop.length + 2;
+    return splitProperty(rule, 'value', {
+        max: max,
+        breakEvery: true,
+        reindent: function (rule) {
+            return getIndent(rule).length + rule.prop.length + 2;
+        }
     });
 }

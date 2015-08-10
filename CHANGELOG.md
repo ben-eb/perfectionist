@@ -1,3 +1,9 @@
+# 1.3.0
+
+* Better formatting of comments inside rules.
+* Better formatting of selectors inside at-rules.
+* Added an option to configure the indent size.
+
 # 1.2.2
 
 * Fixes a crash when a comment ended the file.
