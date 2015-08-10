@@ -41,7 +41,14 @@ h1{color:red}
 
 ## API
 
-### perfectionist([options])
+### perfectionist.process(css, [options])
+
+#### css
+
+Type: `string`
+*Required option.*
+
+Pass a CSS string to beautify it.
 
 #### options
 
