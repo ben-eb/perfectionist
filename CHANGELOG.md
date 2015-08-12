@@ -1,3 +1,7 @@
+# 1.3.1
+
+* perfectionist will now not remove comments within selector strings.
+
 # 1.3.0
 
 * Better formatting of comments inside rules.

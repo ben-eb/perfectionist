@@ -53,6 +53,9 @@ function applyCompact (css, opts) {
             rule.before = indent + rule.before;
             rule.semicolon = true;
         }
+        if (rule._selector && rule._selector.raw) {
+            rule.selector = rule._selector.raw;
+        }
         maxSelectorLength(rule, opts);
         if (rule.type === 'decl') {
             if (deeplyNested(rule.parent)) {
@@ -129,6 +132,9 @@ function applyExpanded (css, opts) {
                     }
                 });
             });
+        }
+        if (rule._selector && rule._selector.raw) {
+            rule.selector = rule._selector.raw;
         }
         maxSelectorLength(rule, opts);
         if (rule.type === 'atrule') {
