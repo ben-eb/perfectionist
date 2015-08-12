@@ -2,7 +2,7 @@
 
 .selectorA, .selectorB, .selectorC, .selectorX,
 /* comment 1 */
- /* comment 2 */
- .selectorD, .selectorE, .selectorF {
+/* comment 2 */
+.selectorD, .selectorE, .selectorF {
     color: white;
 }
