@@ -1,3 +1,12 @@
+# 1.4.0
+
+* Added an option to disable the visual cascade of properties.
+* Fixed an issue where at-rules were not getting an appropriate amount of
+  newlines following the rule.
+* Fixed an issue where comments in values were being removed.
+* Where possible, perfectionist will condense multi-line selectors into
+  a single line.
+
 # 1.3.1
 
 * perfectionist will now not remove comments within selector strings.
