@@ -112,7 +112,7 @@ function applyExpanded (css, opts) {
             }
         }
         // visual cascade of vendor prefixed properties
-        if (rule.type === 'rule' && rule.nodes.length > 1) {
+        if (opts.cascade && rule.type === 'rule' && rule.nodes.length > 1) {
             let props = [];
             let prefixed = prefixedDecls(rule).sort(longest).filter(({prop}) => {
                 let base = unprefix(prop);
@@ -164,7 +164,8 @@ let perfectionist = postcss.plugin('perfectionist', opts => {
         indentSize: 4,
         maxAtRuleLength: 80,
         maxSelectorLength: 80,
-        maxValueLength: 80
+        maxValueLength: 80,
+        cascade: true
     }, opts);
     return css => {
         css.eachInside(node => {

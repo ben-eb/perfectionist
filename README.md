@@ -52,6 +52,32 @@ Pass a CSS string to beautify it.
 
 #### options
 
+##### cascade
+
+Type: `boolean`
+Default: `true`
+
+Set this to `false` to disable visual cascading of vendor prefixed properties.
+Note that this transform only applies to the `expanded` format.
+
+###### `true`
+
+```css
+h1 {
+    -webkit-border-radius: 12px;
+            border-radius: 12px;
+}
+```
+
+###### `false`
+
+```css
+h1 {
+    -webkit-border-radius: 12px;
+    border-radius: 12px;
+}
+```
+
 ##### format
 
 Type: `string`
@@ -76,8 +102,8 @@ Default: `80`
 
 If set to a positive integer, set a maximum width for at-rule parameters; if
 they exceed this, they will be split up over multiple lines. If false, this
-behaviour will not be performed. Note that this transform is excluded from the
-`compressed` & `compact` formats.
+behaviour will not be performed. Note that this transform only applies to
+the `expanded` format.
 
 ##### maxSelectorLength
 
@@ -96,8 +122,8 @@ Default: `80`
 
 If set to a positive integer, set a maximum width for a property value; if
 it exceeds this, it will be split up over multiple lines. If false, this
-behaviour will not be performed. Note that this transform is excluded from the
-`compressed` & `compact` formats.
+behaviour will not be performed. Note that this transform only applies to
+the `expanded` format.
 
 ##### sourcemap
 
