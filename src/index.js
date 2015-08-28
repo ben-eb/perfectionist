@@ -73,7 +73,7 @@ function applyCompact (css, opts) {
         if (deep) {
             rule.after = '\n' + indent;
         }
-        if (rule.parent && rule !== rule.parent.first && rule.type === 'rule') {
+        if (rule.parent && rule !== rule.parent.first && (rule.type === 'rule' || rule.type === 'atrule')) {
             rule.before = '\n' + indent;
         }
     });
@@ -151,7 +151,7 @@ function applyExpanded (css, opts) {
             rule.before = '\n' + rule.before;
             rule.after = '\n' + indent;
         }
-        if (rule.parent && rule !== rule.parent.first && rule.type === 'rule') {
+        if (rule.parent && rule !== rule.parent.first && (rule.type === 'rule' || rule.type === 'atrule')) {
             rule.before = '\n\n' + indent;
         }
     });
