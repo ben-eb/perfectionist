@@ -1,3 +1,8 @@
+# 1.4.1
+
+* Fixed an issue where perfectionist would add an extra space in between
+  at rules with no child nodes (for example, `@import`).
+
 # 1.4.0
 
 * Added an option to disable the visual cascade of properties.

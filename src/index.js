@@ -49,7 +49,12 @@ function applyCompact (css, opts) {
         let indent = getIndent(rule, opts.indentSize);
         let deep = deeplyNested(rule);
         if (rule.type === 'rule' || rule.type === 'atrule') {
-            rule.between = rule.after = ' ';
+            if (!rule.nodes) {
+                rule.between = '';
+            } else {
+                rule.between = ' ';
+            }
+            rule.after = ' ';
             rule.before = indent + rule.before;
             rule.semicolon = true;
         }
@@ -105,7 +110,11 @@ function applyExpanded (css, opts) {
         }
         rule.before = indent + rule.before;
         if (rule.type === 'rule' || rule.type === 'atrule') {
-            rule.between = ' ';
+            if (!rule.nodes) {
+                rule.between = '';
+            } else {
+                rule.between = ' ';
+            }
             rule.semicolon = true;
             if (rule.nodes) {
                 rule.after = '\n';
@@ -152,6 +161,10 @@ function applyExpanded (css, opts) {
             rule.after = '\n' + indent;
         }
         if (rule.parent && rule !== rule.parent.first && (rule.type === 'rule' || rule.type === 'atrule')) {
+            if (rule.type === 'atrule' && !rule.nodes) {
+                rule.before = '\n' + indent;
+                return;
+            }
             rule.before = '\n\n' + indent;
         }
     });
