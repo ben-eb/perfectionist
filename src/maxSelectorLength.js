@@ -10,10 +10,10 @@ function splitProperty (rule, prop, opts) {
         reindent: false
     }, opts);
     let max = opts.max;
-    if (!max) { return; }
     let property = rule[prop];
-    if (property && property.length > max) {
-        let exploded = list.comma(property);
+    if (!max || !property) { return; }
+    let exploded = list.comma(property);
+    if (property.length > max || opts.reduce) {
         let indent = 0;
         if (typeof opts.reindent === 'function') {
             indent = opts.reindent(rule);
@@ -49,6 +49,7 @@ export function maxAtRuleLength (rule, {maxAtRuleLength: max}) {
 export function maxSelectorLength (rule, opts) {
     return splitProperty(rule, 'selector', {
         max: opts.maxSelectorLength,
+        reduce: true, // where possible reduce to one line
         reindent: function (rule) {
             return getIndent(rule, opts.indentSize).length;
         }
