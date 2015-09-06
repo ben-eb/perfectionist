@@ -57,8 +57,8 @@ export function maxSelectorLength (rule, opts) {
 }
 
 export function maxValueLength (rule, {maxValueLength: max}) {
-    if (rule._value && rule._value.raw) {
-        rule.value = rule._value.raw;
+    if (rule.raws.value && rule.raws.value.raw) {
+        rule.value = rule.raws.value.raw;
     }
     return splitProperty(rule, 'value', {
         max: max,
