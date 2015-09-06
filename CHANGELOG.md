@@ -1,3 +1,7 @@
+# 2.0.0
+
+* Upgrade to PostCSS 5.x.
+
 # 1.4.1
 
 * Fixed an issue where perfectionist would add an extra space in between
