@@ -14,34 +14,34 @@ import sameLine from './sameLine';
 let unprefix = postcss.vendor.unprefixed;
 
 function applyCompressed (css) {
-    css.eachInside(rule => {
-        rule.semicolon = false;
+    css.walk(rule => {
+        rule.raws.semicolon = false;
         if (rule.type === 'rule' || rule.type === 'atrule') {
-            rule.between = rule.after = '';
+            rule.raws.between = rule.raws.after = '';
         }
-        if (rule.type === 'decl' && !commentRegex().test(rule.between)) {
-            rule.between = ':';
+        if (rule.type === 'decl' && !commentRegex().test(rule.raws.between)) {
+            rule.raws.between = ':';
         }
     });
     // Remove final newline
-    css.after = '';
+    css.raws.after = '';
 }
 
 function applyCompact (css, opts) {
-    css.eachInside(rule => {
+    css.walk(rule => {
         opts.indentSize = 1;
         if (rule.type === 'comment') {
             let prev = rule.prev();
             if (prev && prev.type === 'decl') {
-                rule.before = ' ' + rule.before;
+                rule.raws.before = ' ' + rule.raws.before;
             }
             if (rule.parent && rule.parent.type === 'root') {
                 let next = rule.next();
                 if (next) {
-                    next.before = '\n';
+                    next.raws.before = '\n';
                 }
                 if (rule !== css.first) {
-                    rule.before = '\n';
+                    rule.raws.before = '\n';
                 }
             }
             return;
@@ -50,74 +50,74 @@ function applyCompact (css, opts) {
         let deep = deeplyNested(rule);
         if (rule.type === 'rule' || rule.type === 'atrule') {
             if (!rule.nodes) {
-                rule.between = '';
+                rule.raws.between = '';
             } else {
-                rule.between = ' ';
+                rule.raws.between = ' ';
             }
-            rule.after = ' ';
-            rule.before = indent + rule.before;
-            rule.semicolon = true;
+            rule.raws.after = ' ';
+            rule.raws.before = indent + rule.raws.before;
+            rule.raws.semicolon = true;
         }
-        if (rule._selector && rule._selector.raw) {
-            rule.selector = rule._selector.raw;
+        if (rule.raws.selector && rule.raws.selector.raw) {
+            rule.selector = rule.raws.selector.raw;
         }
         maxSelectorLength(rule, opts);
         if (rule.type === 'decl') {
             if (deeplyNested(rule.parent)) {
-                rule.before = '\n' + indent + rule.before;
+                rule.raws.before = '\n' + indent + rule.raws.before;
             } else {
-                rule.before = ' ' + rule.before;
+                rule.raws.before = ' ' + rule.raws.before;
             }
-            if (!commentRegex().test(rule.between)) {
-                rule.between = ': ';
+            if (!commentRegex().test(rule.raws.between)) {
+                rule.raws.between = ': ';
             }
         }
         if ((deep || rule.nodes) && rule !== css.first) {
-            rule.before = '\n ';
+            rule.raws.before = '\n ';
         }
         if (deep) {
-            rule.after = '\n' + indent;
+            rule.raws.after = '\n' + indent;
         }
         if (rule.parent && rule !== rule.parent.first && (rule.type === 'rule' || rule.type === 'atrule')) {
-            rule.before = '\n' + indent;
+            rule.raws.before = '\n' + indent;
         }
     });
-    css.after = '\n';
+    css.raws.after = '\n';
 }
 
 function applyExpanded (css, opts) {
-    css.eachInside(rule => {
+    css.walk(rule => {
         let indent = getIndent(rule, opts.indentSize);
         if (rule.type === 'comment') {
             let prev = rule.prev();
             if (prev && prev.type === 'decl') {
                 if (sameLine(prev, rule)) {
-                    rule.before = ' ' + rule.before;
+                    rule.raws.before = ' ' + rule.raws.before;
                 } else {
-                    rule.before = '\n' + indent + rule.before;
+                    rule.raws.before = '\n' + indent + rule.raws.before;
                 }
             }
             if (rule.parent && rule.parent.type === 'root') {
                 let next = rule.next();
                 if (next) {
-                    next.before = '\n\n';
+                    next.raws.before = '\n\n';
                 }
                 if (rule !== css.first) {
-                    rule.before = '\n\n';
+                    rule.raws.before = '\n\n';
                 }
             }
             return;
         }
-        rule.before = indent + rule.before;
+        rule.raws.before = indent + rule.raws.before;
         if (rule.type === 'rule' || rule.type === 'atrule') {
             if (!rule.nodes) {
-                rule.between = '';
+                rule.raws.between = '';
             } else {
-                rule.between = ' ';
+                rule.raws.between = ' ';
             }
-            rule.semicolon = true;
+            rule.raws.semicolon = true;
             if (rule.nodes) {
-                rule.after = '\n';
+                rule.raws.after = '\n';
             }
         }
         // visual cascade of vendor prefixed properties
@@ -137,38 +137,38 @@ function applyExpanded (css, opts) {
                     let thisVendor = decl.prop.replace(base, '').length;
                     let extraSpace = vendor - thisVendor;
                     if (extraSpace > 0) {
-                        decl.before = space(extraSpace) + decl.before;
+                        decl.raws.before = space(extraSpace) + decl.raws.before;
                     }
                 });
             });
         }
-        if (rule._selector && rule._selector.raw) {
-            rule.selector = rule._selector.raw;
+        if (rule.raws.selector && rule.raws.selector.raw) {
+            rule.selector = rule.raws.selector.raw;
         }
         maxSelectorLength(rule, opts);
         if (rule.type === 'atrule') {
-            if (rule.params) { rule.afterName = ' '; }
+            if (rule.params) { rule.raws.afterName = ' '; }
             maxAtRuleLength(rule, opts);
         }
         if (rule.type === 'decl') {
-            if (!commentRegex().test(rule.between)) {
-                rule.between = ': ';
+            if (!commentRegex().test(rule.raws.between)) {
+                rule.raws.between = ': ';
             }
             maxValueLength(rule, opts);
         }
         if (rule.parent && rule.parent.type !== 'root') {
-            rule.before = '\n' + rule.before;
-            rule.after = '\n' + indent;
+            rule.raws.before = '\n' + rule.raws.before;
+            rule.raws.after = '\n' + indent;
         }
         if (rule.parent && rule !== rule.parent.first && (rule.type === 'rule' || rule.type === 'atrule')) {
             if (rule.type === 'atrule' && !rule.nodes) {
-                rule.before = '\n' + indent;
+                rule.raws.before = '\n' + indent;
                 return;
             }
-            rule.before = '\n\n' + indent;
+            rule.raws.before = '\n\n' + indent;
         }
     });
-    css.after = '\n';
+    css.raws.after = '\n';
 }
 
 let perfectionist = postcss.plugin('perfectionist', opts => {
@@ -181,9 +181,9 @@ let perfectionist = postcss.plugin('perfectionist', opts => {
         cascade: true
     }, opts);
     return css => {
-        css.eachInside(node => {
-            if (node.before) {
-                node.before = node.before.replace(/[;\s]/g, '');
+        css.walk(node => {
+            if (node.raws.before) {
+                node.raws.before = node.raws.before.replace(/[;\s]/g, '');
             }
         });
         switch (opts.format) {
