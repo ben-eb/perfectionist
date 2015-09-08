@@ -146,15 +146,15 @@ perfectionist also ships with a CLI app. To see the available options, just run:
 $ perfectionist --help
 ```
 
-### Sublime Text
-
-perfectionist is available as a Sublime Text 2/3 plugin, thanks to @yisibl.
-https://github.com/yisibl/sublime-perfectionist
-
 ## Usage
 
 See the [PostCSS documentation](https://github.com/postcss/postcss#usage) for
 examples for your environment.
+
+## Integrations
+
+- [Sublime Text plugin](https://github.com/yisibl/sublime-perfectionist)
+- [Atom plugin](https://github.com/sindresorhus/atom-perfectionist)
 
 ## Contributing
 
