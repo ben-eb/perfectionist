@@ -11,3 +11,6 @@ insert_final_newline = true
 
 [**/__tests__/**/**.expected.css]
 insert_final_newline = false
+
+[**/__tests__/**/**.compressed.css]
+insert_final_newline = false

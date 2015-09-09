@@ -13,7 +13,35 @@ import sameLine from './sameLine';
 
 let unprefix = postcss.vendor.unprefixed;
 
+function isSassVariable (decl) {
+    return decl.parent.type === 'root' && decl.prop.match(/^\$/);
+}
+
 function applyCompressed (css) {
+    css.walkDecls(decl => {
+        // Format sass variable `$size: 30em;`
+        if (isSassVariable(decl)) {
+            decl.raws.before = '';
+            decl.raws.between = ':';
+            decl.value = decl.value.trim().replace(/\s+/g, ' ');
+        }
+
+        // Remove spaces before commas and keep only one space after.
+        decl.value = decl.value.replace(/(\s+)?,(\s)*/g, ',');
+        decl.value = decl.value.replace(/\(\s*/g, '(');
+        decl.value = decl.value.replace(/\s*\)/g, ')');
+
+
+        // Format `!important`
+        if (decl.important) {
+            decl.raws.important = "!important";
+        }
+
+        // Format `!default`, `!global` and more similar values.
+        if (decl.value.match(/\s*!\s*(\w+)\s*$/i) !== null) {
+            decl.value = decl.value.replace(/\s*!\s*(\w+)\s*$/i, '!$1');
+        }
+    });
     css.walk(rule => {
         rule.raws.semicolon = false;
         if (rule.type === 'rule' || rule.type === 'atrule') {
@@ -28,6 +56,31 @@ function applyCompressed (css) {
 }
 
 function applyCompact (css, opts) {
+    css.walkDecls(decl => {
+        // Format sass variable `$size: 30em;`
+        if (isSassVariable(decl)) {
+            decl.raws.before = '';
+            decl.raws.between = ': ';
+            decl.value = decl.value.trim().replace(/\s+/g, ' ');
+        }
+
+        // Remove spaces before commas and keep only one space after.
+        decl.value = decl.value.replace(/(\s+)?,(\s)*/g, ', ');
+        decl.value = decl.value.replace(/\(\s*/g, '( ');
+        decl.value = decl.value.replace(/\s*\)/g, ' )');
+
+
+        // Format `!important`
+        if (decl.important) {
+            decl.raws.important = " !important";
+        }
+
+        // Format `!default`, `!global` and more similar values.
+        if (decl.value.match(/\s*!\s*(\w+)\s*$/i) !== null) {
+            decl.value = decl.value.replace(/\s*!\s*(\w+)\s*$/i, ' !$1');
+        }
+    });
+
     css.walk(rule => {
         opts.indentSize = 1;
         if (rule.type === 'comment') {
@@ -86,6 +139,31 @@ function applyCompact (css, opts) {
 }
 
 function applyExpanded (css, opts) {
+    css.walkDecls(decl => {
+        // Format sass variable `$size: 30em;`
+        if (isSassVariable(decl)) {
+            decl.raws.before = '\n';
+            decl.raws.between = ': ';
+        }
+
+        decl.value = decl.value.trim().replace(/\s+/g, ' ');
+        // Remove spaces before commas and keep only one space after.
+        decl.value = decl.value.replace(/(\s+)?,(\s)*/g, ', ');
+        decl.value = decl.value.replace(/\(\s*/g, '(');
+        decl.value = decl.value.replace(/\s*\)/g, ')');
+
+
+        // Format `!important`
+        if (decl.important) {
+            decl.raws.important = " !important";
+        }
+
+        // Format `!default`, `!global` and more similar values.
+        if (decl.value.match(/\s*!\s*(\w+)\s*$/i) !== null) {
+            decl.value = decl.value.replace(/\s*!\s*(\w+)\s*$/i, ' !$1');
+        }
+    });
+
     css.walk(rule => {
         let indent = getIndent(rule, opts.indentSize);
         if (rule.type === 'comment') {
