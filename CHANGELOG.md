@@ -1,3 +1,9 @@
+# 2.1.0
+
+* Adds scss syntax support.
+* Better formatting of functions; `rgb(0,0,0)` becomes `rgba(0, 0, 0)`
+  (thanks to @yisibl).
+
 # 2.0.0
 
 * Upgrade to PostCSS 5.x.
