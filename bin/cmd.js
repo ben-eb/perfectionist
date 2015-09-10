@@ -10,6 +10,7 @@ var opts = require('minimist')(process.argv.slice(2), {
         f: 'format',
         h: 'help',
         s: 'sourcemap',
+        t: 'syntax',
         v: 'version'
     }
 });

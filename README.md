@@ -132,6 +132,13 @@ Default: `false`
 
 Generate a sourcemap with the transformed CSS.
 
+##### syntax
+
+Type: `string`
+
+Specify `scss` if you would like to also format SCSS-style single line comments.
+This loads the [postcss-scss](https://github.com/postcss/postcss-scss) plugin.
+
 ### `postcss([ perfectionist(opts) ])`
 
 perfectionist can also be consumed as a PostCSS plugin. See the

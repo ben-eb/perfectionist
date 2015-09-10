@@ -182,6 +182,9 @@ function applyExpanded (css, opts) {
                     rule.raws.before = '\n' + indent + rule.raws.before;
                 }
             }
+            if (!prev && rule !== css.first) {
+                rule.raws.before = '\n' + indent + rule.raws.before;
+            }
             if (rule.parent && rule.parent.type === 'root') {
                 let next = rule.next();
                 if (next) {
@@ -287,6 +290,9 @@ let perfectionist = postcss.plugin('perfectionist', opts => {
 
 perfectionist.process = (css, opts = {}) => {
     opts.map = opts.map || (opts.sourcemap ? true : null);
+    if (opts.syntax === 'scss') {
+        opts.syntax = require('postcss-scss');
+    }
     let processor = postcss([ perfectionist(opts) ]);
     return processor.process(css, opts);
 };

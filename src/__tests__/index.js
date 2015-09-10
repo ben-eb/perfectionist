@@ -31,16 +31,17 @@ Object.keys(specs).forEach(name => {
     });
 });
 
-test('should handle single line comments in compressed/compact styles', t => {
-    t.plan(2);
+test('should handle single line comments', t => {
+    t.plan(3);
 
     let scss = (css, format) => {
         return plugin.process(css, {
             format: format,
-            syntax: require('postcss-scss')
+            syntax: 'scss'
         }).css;
     };
 
+    t.equal(scss('h1{\n  // test \n  color: red;\n}\n', 'expanded'), 'h1 {\n    // test \n    color: red;\n}\n');
     t.equal(scss('h1{\n  // test \n  color: red;\n}\n', 'compact'), 'h1 {/* test */ color: red; }\n');
     t.equal(scss('h1{\n  // test \n  color: red;\n}\n', 'compressed'), 'h1{/* test */color:red}');
 });
