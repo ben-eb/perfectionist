@@ -20,6 +20,9 @@ function isSassVariable (decl) {
 function applyCompressed (css) {
     css.walk(rule => {
         rule.raws.semicolon = false;
+        if (rule.type === 'comment' && rule.raws.inline) {
+            rule.raws.inline = null;
+        }
         if (rule.type === 'rule' || rule.type === 'atrule') {
             rule.raws.between = rule.raws.after = '';
         }
@@ -83,6 +86,9 @@ function applyCompact (css, opts) {
         }
         opts.indentSize = 1;
         if (rule.type === 'comment') {
+            if (rule.raws.inline) {
+                rule.raws.inline = null;
+            }
             let prev = rule.prev();
             if (prev && prev.type === 'decl') {
                 rule.raws.before = ' ' + rule.raws.before;

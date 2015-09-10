@@ -45,6 +45,7 @@
     "babel": "^5.8.21",
     "babel-tape-runner": "^1.2.0",
     "faucet": "0.0.1",
+    "postcss-scss": "^0.1.2",
     "tape": "^4.0.3"
   }
 }
