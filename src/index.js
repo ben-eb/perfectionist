@@ -18,30 +18,6 @@ function isSassVariable (decl) {
 }
 
 function applyCompressed (css) {
-    css.walkDecls(decl => {
-        // Format sass variable `$size: 30em;`
-        if (isSassVariable(decl)) {
-            decl.raws.before = '';
-            decl.raws.between = ':';
-            decl.value = decl.value.trim().replace(/\s+/g, ' ');
-        }
-
-        // Remove spaces before commas and keep only one space after.
-        decl.value = decl.value.replace(/(\s+)?,(\s)*/g, ',');
-        decl.value = decl.value.replace(/\(\s*/g, '(');
-        decl.value = decl.value.replace(/\s*\)/g, ')');
-
-
-        // Format `!important`
-        if (decl.important) {
-            decl.raws.important = "!important";
-        }
-
-        // Format `!default`, `!global` and more similar values.
-        if (decl.value.match(/\s*!\s*(\w+)\s*$/i) !== null) {
-            decl.value = decl.value.replace(/\s*!\s*(\w+)\s*$/i, '!$1');
-        }
-    });
     css.walk(rule => {
         rule.raws.semicolon = false;
         if (rule.type === 'rule' || rule.type === 'atrule') {
@@ -50,38 +26,61 @@ function applyCompressed (css) {
         if (rule.type === 'decl' && !commentRegex().test(rule.raws.between)) {
             rule.raws.between = ':';
         }
+        if (rule.type === 'decl') {
+            // Format sass variable `$size: 30em;`
+            if (isSassVariable(rule)) {
+                rule.raws.before = '';
+                rule.raws.between = ':';
+                rule.value = rule.value.trim().replace(/\s+/g, ' ');
+            }
+
+            // Remove spaces before commas and keep only one space after.
+            rule.value = rule.value.replace(/(\s+)?,(\s)*/g, ',');
+            rule.value = rule.value.replace(/\(\s*/g, '(');
+            rule.value = rule.value.replace(/\s*\)/g, ')');
+
+
+            // Format `!important`
+            if (rule.important) {
+                rule.raws.important = '!important';
+            }
+
+            // Format `!default`, `!global` and more similar values.
+            if (rule.value.match(/\s*!\s*(\w+)\s*$/i) !== null) {
+                rule.value = rule.value.replace(/\s*!\s*(\w+)\s*$/i, '!$1');
+            }
+        }
     });
     // Remove final newline
     css.raws.after = '';
 }
 
 function applyCompact (css, opts) {
-    css.walkDecls(decl => {
-        // Format sass variable `$size: 30em;`
-        if (isSassVariable(decl)) {
-            decl.raws.before = '';
-            decl.raws.between = ': ';
-            decl.value = decl.value.trim().replace(/\s+/g, ' ');
-        }
-
-        // Remove spaces before commas and keep only one space after.
-        decl.value = decl.value.replace(/(\s+)?,(\s)*/g, ', ');
-        decl.value = decl.value.replace(/\(\s*/g, '( ');
-        decl.value = decl.value.replace(/\s*\)/g, ' )');
-
-
-        // Format `!important`
-        if (decl.important) {
-            decl.raws.important = " !important";
-        }
-
-        // Format `!default`, `!global` and more similar values.
-        if (decl.value.match(/\s*!\s*(\w+)\s*$/i) !== null) {
-            decl.value = decl.value.replace(/\s*!\s*(\w+)\s*$/i, ' !$1');
-        }
-    });
-
     css.walk(rule => {
+        if (rule.type === 'decl') {
+            // Format sass variable `$size: 30em;`
+            if (isSassVariable(rule)) {
+                rule.raws.before = '';
+                rule.raws.between = ': ';
+                rule.value = rule.value.trim().replace(/\s+/g, ' ');
+            }
+
+            // Remove spaces before commas and keep only one space after.
+            rule.value = rule.value.replace(/(\s+)?,(\s)*/g, ', ');
+            rule.value = rule.value.replace(/\(\s*/g, '( ');
+            rule.value = rule.value.replace(/\s*\)/g, ' )');
+
+
+            // Format `!important`
+            if (rule.important) {
+                rule.raws.important = " !important";
+            }
+
+            // Format `!default`, `!global` and more similar values.
+            if (rule.value.match(/\s*!\s*(\w+)\s*$/i) !== null) {
+                rule.value = rule.value.replace(/\s*!\s*(\w+)\s*$/i, ' !$1');
+            }
+        }
         opts.indentSize = 1;
         if (rule.type === 'comment') {
             let prev = rule.prev();
@@ -117,7 +116,8 @@ function applyCompact (css, opts) {
         maxSelectorLength(rule, opts);
         if (rule.type === 'decl') {
             if (deeplyNested(rule.parent)) {
-                rule.raws.before = '\n' + indent + rule.raws.before;
+                let newline = rule === css.first ? '' : '\n';
+                rule.raws.before = newline + indent + rule.raws.before;
             } else {
                 rule.raws.before = ' ' + rule.raws.before;
             }
@@ -139,32 +139,33 @@ function applyCompact (css, opts) {
 }
 
 function applyExpanded (css, opts) {
-    css.walkDecls(decl => {
-        // Format sass variable `$size: 30em;`
-        if (isSassVariable(decl)) {
-            decl.raws.before = '\n';
-            decl.raws.between = ': ';
-        }
-
-        decl.value = decl.value.trim().replace(/\s+/g, ' ');
-        // Remove spaces before commas and keep only one space after.
-        decl.value = decl.value.replace(/(\s+)?,(\s)*/g, ', ');
-        decl.value = decl.value.replace(/\(\s*/g, '(');
-        decl.value = decl.value.replace(/\s*\)/g, ')');
-
-
-        // Format `!important`
-        if (decl.important) {
-            decl.raws.important = " !important";
-        }
-
-        // Format `!default`, `!global` and more similar values.
-        if (decl.value.match(/\s*!\s*(\w+)\s*$/i) !== null) {
-            decl.value = decl.value.replace(/\s*!\s*(\w+)\s*$/i, ' !$1');
-        }
-    });
-
     css.walk(rule => {
+        if (rule.type === 'decl') {
+            // Format sass variable `$size: 30em;`
+            if (isSassVariable(rule)) {
+                if (rule !== css.first) {
+                    rule.raws.before = '\n';
+                }
+                rule.raws.between = ': ';
+            }
+
+            rule.value = rule.value.trim().replace(/\s+/g, ' ');
+            // Remove spaces before commas and keep only one space after.
+            rule.value = rule.value.replace(/(\s+)?,(\s)*/g, ', ');
+            rule.value = rule.value.replace(/\(\s*/g, '(');
+            rule.value = rule.value.replace(/\s*\)/g, ')');
+
+
+            // Format `!important`
+            if (rule.important) {
+                rule.raws.important = " !important";
+            }
+
+            // Format `!default`, `!global` and more similar values.
+            if (rule.value.match(/\s*!\s*(\w+)\s*$/i) !== null) {
+                rule.value = rule.value.replace(/\s*!\s*(\w+)\s*$/i, ' !$1');
+            }
+        }
         let indent = getIndent(rule, opts.indentSize);
         if (rule.type === 'comment') {
             let prev = rule.prev();
