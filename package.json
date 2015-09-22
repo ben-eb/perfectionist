@@ -1,6 +1,6 @@
 {
   "name": "perfectionist",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Beautify CSS files.",
   "main": "dist/index.js",
   "bin": {
