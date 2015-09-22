@@ -4,6 +4,7 @@ import test from 'tape';
 import plugin from '../';
 import path from 'path';
 import fs from 'fs';
+import postcss from 'postcss';
 
 let base = path.join(__dirname, 'fixtures');
 
@@ -44,4 +45,32 @@ test('should handle single line comments', t => {
     t.equal(scss('h1{\n  // test \n  color: red;\n}\n', 'expanded'), 'h1 {\n    // test \n    color: red;\n}\n');
     t.equal(scss('h1{\n  // test \n  color: red;\n}\n', 'compact'), 'h1 {/* test */ color: red; }\n');
     t.equal(scss('h1{\n  // test \n  color: red;\n}\n', 'compressed'), 'h1{/* test */color:red}');
+});
+
+test('should handle declarations added without raw properties', t => {
+    t.plan(3);
+
+    let ensureRed = postcss.plugin('ensure-red', () => {
+        return css => {
+            let rule = postcss.rule({selector: '*'});
+            rule.append(postcss.decl({
+                prop: 'color',
+                value: 'red',
+                important: true
+            }));
+            css.append(rule);
+        };
+    });
+
+    postcss([ ensureRed, plugin ]).process('h1 { color: blue }').then(result => {
+        t.notOk(!!~result.css.indexOf('undefined'));
+    });
+
+    postcss([ ensureRed, plugin({format: 'compact'}) ]).process('h1 { color: blue }').then(result => {
+        t.notOk(!!~result.css.indexOf('undefined'));
+    });
+
+    postcss([ ensureRed, plugin({format: 'compressed'}) ]).process('h1 { color: blue }').then(result => {
+        t.notOk(!!~result.css.indexOf('undefined'));
+    });
 });

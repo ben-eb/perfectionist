@@ -1,6 +1,7 @@
 'use strict';
 
 import postcss from 'postcss';
+import defined from 'defined';
 import deeplyNested from './deeplyNested';
 import getIndent from './getIndent';
 import longest from './longest';
@@ -15,6 +16,10 @@ let unprefix = postcss.vendor.unprefixed;
 
 function isSassVariable (decl) {
     return decl.parent.type === 'root' && decl.prop.match(/^\$/);
+}
+
+function blank (value) {
+    return defined(value, '');
 }
 
 function applyCompressed (css) {
@@ -91,7 +96,7 @@ function applyCompact (css, opts) {
             }
             let prev = rule.prev();
             if (prev && prev.type === 'decl') {
-                rule.raws.before = ' ' + rule.raws.before;
+                rule.raws.before = ' ' + blank(rule.raws.before);
             }
             if (rule.parent && rule.parent.type === 'root') {
                 let next = rule.next();
@@ -113,7 +118,7 @@ function applyCompact (css, opts) {
                 rule.raws.between = ' ';
             }
             rule.raws.after = ' ';
-            rule.raws.before = indent + rule.raws.before;
+            rule.raws.before = indent + blank(rule.raws.before);
             rule.raws.semicolon = true;
         }
         if (rule.raws.selector && rule.raws.selector.raw) {
@@ -123,9 +128,9 @@ function applyCompact (css, opts) {
         if (rule.type === 'decl') {
             if (deeplyNested(rule.parent)) {
                 let newline = rule === css.first ? '' : '\n';
-                rule.raws.before = newline + indent + rule.raws.before;
+                rule.raws.before = newline + indent + blank(rule.raws.before);
             } else {
-                rule.raws.before = ' ' + rule.raws.before;
+                rule.raws.before = ' ' + blank(rule.raws.before);
             }
             if (!commentRegex().test(rule.raws.between)) {
                 rule.raws.between = ': ';
@@ -177,13 +182,13 @@ function applyExpanded (css, opts) {
             let prev = rule.prev();
             if (prev && prev.type === 'decl') {
                 if (sameLine(prev, rule)) {
-                    rule.raws.before = ' ' + rule.raws.before;
+                    rule.raws.before = ' ' + blank(rule.raws.before);
                 } else {
-                    rule.raws.before = '\n' + indent + rule.raws.before;
+                    rule.raws.before = '\n' + indent + blank(rule.raws.before);
                 }
             }
             if (!prev && rule !== css.first) {
-                rule.raws.before = '\n' + indent + rule.raws.before;
+                rule.raws.before = '\n' + indent + blank(rule.raws.before);
             }
             if (rule.parent && rule.parent.type === 'root') {
                 let next = rule.next();
@@ -196,7 +201,7 @@ function applyExpanded (css, opts) {
             }
             return;
         }
-        rule.raws.before = indent + rule.raws.before;
+        rule.raws.before = indent + blank(rule.raws.before);
         if (rule.type === 'rule' || rule.type === 'atrule') {
             if (!rule.nodes) {
                 rule.raws.between = '';
@@ -225,7 +230,7 @@ function applyExpanded (css, opts) {
                     let thisVendor = decl.prop.replace(base, '').length;
                     let extraSpace = vendor - thisVendor;
                     if (extraSpace > 0) {
-                        decl.raws.before = space(extraSpace) + decl.raws.before;
+                        decl.raws.before = space(extraSpace) + blank(decl.raws.before);
                     }
                 });
             });
@@ -245,7 +250,7 @@ function applyExpanded (css, opts) {
             maxValueLength(rule, opts);
         }
         if (rule.parent && rule.parent.type !== 'root') {
-            rule.raws.before = '\n' + rule.raws.before;
+            rule.raws.before = '\n' + blank(rule.raws.before);
             rule.raws.after = '\n' + indent;
         }
         if (rule.parent && rule !== rule.parent.first && (rule.type === 'rule' || rule.type === 'atrule')) {

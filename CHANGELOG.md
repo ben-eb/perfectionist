@@ -1,3 +1,8 @@
+# 2.1.1
+
+* Fixes a plugin integration issue where `undefined` was appearing in
+  the output.
+
 # 2.1.0
 
 * Adds scss syntax support.
