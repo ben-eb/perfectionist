@@ -35,18 +35,18 @@
   "dependencies": {
     "comment-regex": "^1.0.0",
     "defined": "^1.0.0",
-    "minimist": "^1.1.3",
-    "object-assign": "^3.0.0",
-    "postcss": "^5.0.4",
+    "minimist": "^1.2.0",
+    "object-assign": "^4.0.1",
+    "postcss": "5.0.5",
     "postcss-scss": "^0.1.2",
     "read-file-stdin": "^0.2.0",
     "string.prototype.repeat": "^0.2.0",
     "write-file-stdout": "0.0.2"
   },
   "devDependencies": {
-    "babel": "^5.8.21",
+    "babel": "^5.8.23",
     "babel-tape-runner": "^1.2.0",
     "faucet": "0.0.1",
-    "tape": "^4.0.3"
+    "tape": "^4.2.0"
   }
 }
