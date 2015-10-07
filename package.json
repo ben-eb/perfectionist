@@ -37,7 +37,7 @@
     "defined": "^1.0.0",
     "minimist": "^1.2.0",
     "object-assign": "^4.0.1",
-    "postcss": "5.0.5",
+    "postcss": "^5.0.8",
     "postcss-scss": "^0.1.2",
     "read-file-stdin": "^0.2.0",
     "string.prototype.repeat": "^0.2.0",
@@ -47,6 +47,6 @@
     "babel": "^5.8.23",
     "babel-tape-runner": "^1.2.0",
     "faucet": "0.0.1",
-    "tape": "^4.2.0"
+    "tape": "^4.2.1"
   }
 }

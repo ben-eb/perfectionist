@@ -1,3 +1,7 @@
+# 2.1.2
+
+* Fixes an integration issue with PostCSS 5.0.6.
+
 # 2.1.1
 
 * Fixes a plugin integration issue where `undefined` was appearing in
