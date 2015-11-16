@@ -84,7 +84,7 @@ function applyCompact (css, opts) {
             }
 
             // Remove spaces before commas and keep only one space after.
-            rule.value = rule.value.replace(/(\s+)?,(\s)*/g, ', ');
+            rule.value = rule.value.replace(/(\s*,\s*)(?=(?:[^"']|['"][^"']*["'])*$)/g, ', ');
             rule.value = rule.value.replace(/\(\s*/g, '( ');
             rule.value = rule.value.replace(/\s*\)/g, ' )');
 
@@ -179,7 +179,7 @@ function applyExpanded (css, opts) {
 
             rule.value = rule.value.trim().replace(/\s+/g, ' ');
             // Remove spaces before commas and keep only one space after.
-            rule.value = rule.value.replace(/(\s+)?,(\s)*/g, ', ');
+            rule.value = rule.value.replace(/(\s*,\s*)(?=(?:[^"']|['"][^"']*["'])*$)/g, ', ');
             rule.value = rule.value.replace(/\(\s*/g, '(');
             rule.value = rule.value.replace(/\s*\)/g, ')');
 
