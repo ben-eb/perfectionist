@@ -12,9 +12,9 @@
     "dist"
   ],
   "scripts": {
+    "copy-fixtures": "ncp src/__tests__/fixtures dist/__tests__/fixtures",
     "prepublish": "babel src --out-dir dist --ignore /__tests__/",
-    "test-unformatted": "babel-tape-runner \"src/**/__tests__/*.js\"",
-    "test": "npm run test-unformatted | faucet"
+    "test": "babel src --out-dir dist && npm run copy-fixtures && ava dist/__tests__/"
   },
   "keywords": [
     "beautify",
@@ -44,9 +44,8 @@
     "write-file-stdout": "0.0.2"
   },
   "devDependencies": {
+    "ava": "^0.10.0",
     "babel": "^5.8.23",
-    "babel-tape-runner": "1.2.0",
-    "faucet": "0.0.1",
-    "tape": "^4.2.1"
+    "ncp": "^2.0.0"
   }
 }

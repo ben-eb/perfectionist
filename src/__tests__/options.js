@@ -1,6 +1,6 @@
 "use strict";
 
-import test from 'tape';
+import ava from 'ava';
 import plugin from '../';
 
 let tests = [{
@@ -19,11 +19,9 @@ function perfectionist (css, options) {
     return plugin.process(css, options).css;
 }
 
-test('perfectionist options', (t) => {
-    t.plan(tests.length);
-
+ava('perfectionist options', (t) => {
     tests.forEach(test => {
         let options = test.options || {};
-        t.equal(perfectionist(test.fixture, options), test.expected);
+        t.same(perfectionist(test.fixture, options), test.expected);
     });
 });
