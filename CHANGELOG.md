@@ -1,3 +1,8 @@
+# 2.1.3
+
+* Fixes an issue where extra space was being added to commas inside strings,
+  mangling base64 URLs (thanks to @Mottie, @silverwind, @denji).
+
 # 2.1.2
 
 * Fixes an integration issue with PostCSS 5.0.6.
