@@ -87,7 +87,8 @@ function applyCompact (css, opts) {
             rule.value = rule.value.replace(/(\s*,\s*)(?=(?:[^"']|['"][^"']*["'])*$)/g, ', ');
             rule.value = rule.value.replace(/\(\s*/g, '( ');
             rule.value = rule.value.replace(/\s*\)/g, ' )');
-
+            // Remove space after comma in data-uri
+            rule.value = rule.value.replace(/(data:([a-z]+\/[a-z0-9\-\+]+(;[a-z\-]+\=[a-z0-9\-]+)?)?(;base64)?,)\s+/g, '$1');
 
             // Format `!important`
             if (rule.important) {
@@ -182,6 +183,8 @@ function applyExpanded (css, opts) {
             rule.value = rule.value.replace(/(\s*,\s*)(?=(?:[^"']|['"][^"']*["'])*$)/g, ', ');
             rule.value = rule.value.replace(/\(\s*/g, '(');
             rule.value = rule.value.replace(/\s*\)/g, ')');
+            // Remove space after comma in data-uri
+            rule.value = rule.value.replace(/(data:([a-z]+\/[a-z0-9\-\+]+(;[a-z\-]+\=[a-z0-9\-]+)?)?(;base64)?,)\s+/g, '$1');
 
             // Format `!important`
             if (rule.important) {
