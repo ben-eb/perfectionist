@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "copy-fixtures": "ncp src/__tests__/fixtures dist/__tests__/fixtures",
-    "prepublish": "babel src --out-dir dist --ignore /__tests__/",
+    "prepublish": "de dist && babel src --out-dir dist --ignore /__tests__/",
     "test": "babel src --out-dir dist && npm run copy-fixtures && ava dist/__tests__/"
   },
   "keywords": [
@@ -45,7 +45,12 @@
   },
   "devDependencies": {
     "ava": "^0.10.0",
-    "babel": "^5.8.23",
+    "babel-cli": "^6.3.17",
+    "babel-core": "^6.3.26",
+    "babel-plugin-add-module-exports": "^0.1.2",
+    "babel-preset-es2015-loose": "^6.1.4",
+    "babel-preset-stage-0": "^6.3.13",
+    "del-cli": "^0.1.2",
     "ncp": "^2.0.0"
   }
 }
