@@ -1,5 +1,3 @@
-'use strict';
-
 import postcss from 'postcss';
 import ava from 'ava';
 import perfectionist from '../';

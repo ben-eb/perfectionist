@@ -1,10 +1,8 @@
-"use strict";
-
-import ava from 'ava';
-import plugin from '../';
 import path from 'path';
 import fs from 'fs';
+import ava from 'ava';
 import postcss from 'postcss';
+import plugin from '../';
 
 let base = path.join(__dirname, 'fixtures');
 
@@ -36,7 +34,7 @@ ava('should handle single line comments', t => {
     let scss = (css, format) => {
         return plugin.process(css, {
             format: format,
-            syntax: 'scss'
+            syntax: 'scss',
         }).css;
     };
 
@@ -51,7 +49,7 @@ let ensureRed = postcss.plugin('ensure-red', () => {
         rule.append(postcss.decl({
             prop: 'color',
             value: 'red',
-            important: true
+            important: true,
         }));
         css.append(rule);
     };

@@ -12,6 +12,7 @@
     "dist"
   ],
   "scripts": {
+    "pretest": "eslint src",
     "prepublish": "del-cli dist && babel src --out-dir dist --ignore /__tests__/",
     "test": "ava src/__tests__/"
   },
