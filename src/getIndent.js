@@ -1,5 +1,3 @@
-'use strict';
-
 import space from './space';
 
 export default function getIndent (node, base = 4) {

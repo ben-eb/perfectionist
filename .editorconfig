@@ -14,3 +14,6 @@ insert_final_newline = false
 
 [**/__tests__/**/**.compressed.css]
 insert_final_newline = false
+
+[*.{json,yml}]
+indent_size = 2

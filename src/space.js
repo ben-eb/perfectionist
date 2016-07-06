@@ -1,5 +1,3 @@
-'use strict';
-
 import 'string.prototype.repeat';
 
 export default function space (amount = 1) {

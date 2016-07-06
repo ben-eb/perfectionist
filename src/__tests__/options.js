@@ -22,6 +22,6 @@ function perfectionist (css, options) {
 ava('perfectionist options', (t) => {
     tests.forEach(test => {
         let options = test.options || {};
-        t.same(perfectionist(test.fixture, options), test.expected);
+        t.deepEqual(perfectionist(test.fixture, options), test.expected);
     });
 });

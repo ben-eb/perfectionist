@@ -27,7 +27,7 @@ Object.keys(specs).forEach(name => {
         t.plan(3);
         Object.keys(spec).slice(0, 3).forEach(s => {
             let result = perfectionist(spec.fixture, {format: s});
-            t.same(result, spec[s], `should output the expected result (${s})`);
+            t.deepEqual(result, spec[s], `should output the expected result (${s})`);
         });
     });
 });
@@ -40,9 +40,9 @@ ava('should handle single line comments', t => {
         }).css;
     };
 
-    t.same(scss('h1{\n  // test \n  color: red;\n}\n', 'expanded'), 'h1 {\n    // test \n    color: red;\n}\n');
-    t.same(scss('h1{\n  // test \n  color: red;\n}\n', 'compact'), 'h1 {/* test */ color: red; }\n');
-    t.same(scss('h1{\n  // test \n  color: red;\n}\n', 'compressed'), 'h1{/* test */color:red}');
+    t.deepEqual(scss('h1{\n  // test \n  color: red;\n}\n', 'expanded'), 'h1 {\n    // test \n    color: red;\n}\n');
+    t.deepEqual(scss('h1{\n  // test \n  color: red;\n}\n', 'compact'), 'h1 {/* test */ color: red; }\n');
+    t.deepEqual(scss('h1{\n  // test \n  color: red;\n}\n', 'compressed'), 'h1{/* test */color:red}');
 });
 
 let ensureRed = postcss.plugin('ensure-red', () => {
@@ -59,18 +59,18 @@ let ensureRed = postcss.plugin('ensure-red', () => {
 
 ava('should handle declarations added without raw properties (default)', t => {
     return postcss([ ensureRed, plugin ]).process('h1 { color: blue }').then(result => {
-        t.notOk(!!~result.css.indexOf('undefined'));
+        t.falsy(!!~result.css.indexOf('undefined'));
     });
 });
 
 ava('should handle declarations added without raw properties (compact)', t => {
     return postcss([ ensureRed, plugin({format: 'compact'}) ]).process('h1 { color: blue }').then(result => {
-        t.notOk(!!~result.css.indexOf('undefined'));
+        t.falsy(!!~result.css.indexOf('undefined'));
     });
 });
 
 ava('should handle declarations added without raw properties (compressed)', t => {
     return postcss([ ensureRed, plugin({format: 'compressed'}) ]).process('h1 { color: blue }').then(result => {
-        t.notOk(!!~result.css.indexOf('undefined'));
+        t.falsy(!!~result.css.indexOf('undefined'));
     });
 });
