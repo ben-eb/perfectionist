@@ -14,7 +14,8 @@
   "scripts": {
     "pretest": "eslint src",
     "prepublish": "del-cli dist && babel src --out-dir dist --ignore /__tests__/",
-    "test": "ava src/__tests__/"
+    "test": "ava src/__tests__/",
+    "test-012": "ava src/__tests__/"
   },
   "keywords": [
     "beautify",
