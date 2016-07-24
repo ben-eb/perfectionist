@@ -1,4 +1,3 @@
-import assign from 'object-assign';
 import {block as commentRegex} from 'comment-regex';
 import postcss from 'postcss';
 import defined from 'defined';
@@ -288,14 +287,15 @@ function applyExpanded (css, opts) {
 }
 
 const perfectionist = postcss.plugin('perfectionist', opts => {
-    opts = assign({
+    opts = {
         format: 'expanded',
         indentSize: 4,
         maxAtRuleLength: 80,
         maxSelectorLength: 80,
         maxValueLength: 80,
         cascade: true,
-    }, opts);
+        ...opts,
+    };
     return css => {
         css.walk(node => {
             if (node.raws.before) {
@@ -310,6 +310,7 @@ const perfectionist = postcss.plugin('perfectionist', opts => {
             applyCompressed(css);
             break;
         case 'expanded':
+        default:
             applyExpanded(css, opts);
             break;
         }
