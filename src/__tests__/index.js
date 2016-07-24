@@ -30,17 +30,23 @@ Object.keys(specs).forEach(name => {
     });
 });
 
-ava('should handle single line comments', t => {
-    let scss = (css, format) => {
-        return plugin.process(css, {
-            format: format,
-            syntax: 'scss',
-        }).css;
-    };
+const scss = (css, format) => {
+    return plugin.process(css, {
+        format: format,
+        syntax: 'scss',
+    }).css;
+};
 
-    t.deepEqual(scss('h1{\n  // test \n  color: red;\n}\n', 'expanded'), 'h1 {\n    // test \n    color: red;\n}\n');
-    t.deepEqual(scss('h1{\n  // test \n  color: red;\n}\n', 'compact'), 'h1 {/* test */ color: red; }\n');
-    t.deepEqual(scss('h1{\n  // test \n  color: red;\n}\n', 'compressed'), 'h1{/* test */color:red}');
+ava('should handle single line comments', t => {
+    const input = 'h1{\n  // test \n  color: red;\n}\n';
+    t.deepEqual(scss(input, 'expanded'), 'h1 {\n    // test \n    color: red;\n}\n');
+    t.deepEqual(scss(input, 'compact'), 'h1 {/* test */ color: red; }\n');
+    t.deepEqual(scss(input, 'compressed'), 'h1{/* test */color:red}');
+});
+
+ava('should handle single line comments in @import', t => {
+    const css = 'a, a:visited {\n    //@include border-radius(5px);\n    @include transition(background-color 0.2s ease);\n}\n';
+    t.deepEqual(scss(css), css);
 });
 
 let ensureRed = postcss.plugin('ensure-red', () => {
@@ -55,20 +61,12 @@ let ensureRed = postcss.plugin('ensure-red', () => {
     };
 });
 
-ava('should handle declarations added without raw properties (default)', t => {
-    return postcss([ ensureRed, plugin ]).process('h1 { color: blue }').then(result => {
-        t.falsy(!!~result.css.indexOf('undefined'));
+function handleRaws (t, opts = {}) {
+    return postcss([ensureRed, plugin(opts)]).process('h1 { color: blue }').then(({css}) => {
+        t.falsy(!!~css.indexOf('undefined'));
     });
-});
+}
 
-ava('should handle declarations added without raw properties (compact)', t => {
-    return postcss([ ensureRed, plugin({format: 'compact'}) ]).process('h1 { color: blue }').then(result => {
-        t.falsy(!!~result.css.indexOf('undefined'));
-    });
-});
-
-ava('should handle declarations added without raw properties (compressed)', t => {
-    return postcss([ ensureRed, plugin({format: 'compressed'}) ]).process('h1 { color: blue }').then(result => {
-        t.falsy(!!~result.css.indexOf('undefined'));
-    });
-});
+ava('should handle declarations added without raw properties (default)', handleRaws);
+ava('should handle declarations added without raw properties (compact)', handleRaws, {format: 'compact'});
+ava('should handle declarations added without raw properties (compressed)', handleRaws, {format: 'compressed'});
