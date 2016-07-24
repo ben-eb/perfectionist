@@ -37,7 +37,6 @@
     "comment-regex": "^1.0.0",
     "defined": "^1.0.0",
     "minimist": "^1.2.0",
-    "object-assign": "^4.0.1",
     "postcss": "^5.0.8",
     "postcss-scss": "^0.1.2",
     "read-file-stdin": "^0.2.0",
