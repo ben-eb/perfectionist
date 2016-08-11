@@ -8,26 +8,26 @@ import pkg from '../../package.json';
 let name = pkg.name;
 
 ava('can be used as a postcss plugin', t => {
-    let css = 'h1 { color: #ffffff }';
+    let css = 'h1 { color: #fff }';
 
     return postcss().use(perfectionist()).process(css).then(result => {
-        t.same(result.css, 'h1 {\n    color: #ffffff;\n}\n', 'should be consumed');
+        t.same(result.css, 'h1 {\n    color: #fff;\n}\n', 'should be consumed');
     });
 });
 
 ava('can be used as a postcss plugin (2)', t => {
-    let css = 'h1 { color: #ffffff }';
+    let css = 'h1 { color: #fff }';
 
     return postcss([ perfectionist() ]).process(css).then(result => {
-        t.same(result.css, 'h1 {\n    color: #ffffff;\n}\n', 'should be consumed');
+        t.same(result.css, 'h1 {\n    color: #fff;\n}\n', 'should be consumed');
     });
 });
 
 ava('can be used as a postcss plugin (3)', t => {
-    let css = 'h1 { color: #ffffff }';
+    let css = 'h1 { color: #fff }';
 
     return postcss([ perfectionist ]).process(css).then(result => {
-        t.same(result.css, 'h1 {\n    color: #ffffff;\n}\n', 'should be consumed');
+        t.same(result.css, 'h1 {\n    color: #fff;\n}\n', 'should be consumed');
     });
 });
 
