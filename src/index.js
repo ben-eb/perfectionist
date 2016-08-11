@@ -310,7 +310,7 @@ function applyTransformFeatures (rule, opts) {
     }
 }
 
-let perfectionist = postcss.plugin('perfectionist', opts => {
+const perfectionist = postcss.plugin('perfectionist', opts => {
     opts = {
         format: 'expanded',
         indentSize: 4,
@@ -320,7 +320,7 @@ let perfectionist = postcss.plugin('perfectionist', opts => {
         cascade: true,
         colorCase: 'lower',
         colorShorthand: true,
-        ...opts
+        ...opts,
     };
 
     return css => {
