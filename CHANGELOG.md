@@ -1,3 +1,9 @@
+# 2.1.4
+
+* Replaced internal vendor prefixes list with the vendors module.
+* Uses Babel's object assign.
+* Ensures that the expanded format is used when the option is set to undefined.
+
 # 2.1.3
 
 * Fixes an issue where extra space was being added to commas inside strings,

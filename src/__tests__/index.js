@@ -1,10 +1,8 @@
-"use strict";
-
-import ava from 'ava';
-import plugin from '../';
 import path from 'path';
 import fs from 'fs';
+import ava from 'ava';
 import postcss from 'postcss';
+import plugin from '../';
 
 let base = path.join(__dirname, 'fixtures');
 
@@ -27,22 +25,28 @@ Object.keys(specs).forEach(name => {
         t.plan(3);
         Object.keys(spec).slice(0, 3).forEach(s => {
             let result = perfectionist(spec.fixture, {format: s});
-            t.same(result, spec[s], `should output the expected result (${s})`);
+            t.deepEqual(result, spec[s], `should output the expected result (${s})`);
         });
     });
 });
 
-ava('should handle single line comments', t => {
-    let scss = (css, format) => {
-        return plugin.process(css, {
-            format: format,
-            syntax: 'scss'
-        }).css;
-    };
+const scss = (css, format) => {
+    return plugin.process(css, {
+        format: format,
+        syntax: 'scss',
+    }).css;
+};
 
-    t.same(scss('h1{\n  // test \n  color: red;\n}\n', 'expanded'), 'h1 {\n    // test \n    color: red;\n}\n');
-    t.same(scss('h1{\n  // test \n  color: red;\n}\n', 'compact'), 'h1 {/* test */ color: red; }\n');
-    t.same(scss('h1{\n  // test \n  color: red;\n}\n', 'compressed'), 'h1{/* test */color:red}');
+ava('should handle single line comments', t => {
+    const input = 'h1{\n  // test \n  color: red;\n}\n';
+    t.deepEqual(scss(input, 'expanded'), 'h1 {\n    // test \n    color: red;\n}\n');
+    t.deepEqual(scss(input, 'compact'), 'h1 {/* test */ color: red; }\n');
+    t.deepEqual(scss(input, 'compressed'), 'h1{/* test */color:red}');
+});
+
+ava('should handle single line comments in @import', t => {
+    const css = 'a, a:visited {\n    //@include border-radius(5px);\n    @include transition(background-color 0.2s ease);\n}\n';
+    t.deepEqual(scss(css), css);
 });
 
 let ensureRed = postcss.plugin('ensure-red', () => {
@@ -51,26 +55,18 @@ let ensureRed = postcss.plugin('ensure-red', () => {
         rule.append(postcss.decl({
             prop: 'color',
             value: 'red',
-            important: true
+            important: true,
         }));
         css.append(rule);
     };
 });
 
-ava('should handle declarations added without raw properties (default)', t => {
-    return postcss([ ensureRed, plugin ]).process('h1 { color: blue }').then(result => {
-        t.notOk(!!~result.css.indexOf('undefined'));
+function handleRaws (t, opts = {}) {
+    return postcss([ensureRed, plugin(opts)]).process('h1 { color: blue }').then(({css}) => {
+        t.falsy(!!~css.indexOf('undefined'));
     });
-});
+}
 
-ava('should handle declarations added without raw properties (compact)', t => {
-    return postcss([ ensureRed, plugin({format: 'compact'}) ]).process('h1 { color: blue }').then(result => {
-        t.notOk(!!~result.css.indexOf('undefined'));
-    });
-});
-
-ava('should handle declarations added without raw properties (compressed)', t => {
-    return postcss([ ensureRed, plugin({format: 'compressed'}) ]).process('h1 { color: blue }').then(result => {
-        t.notOk(!!~result.css.indexOf('undefined'));
-    });
-});
+ava('should handle declarations added without raw properties (default)', handleRaws);
+ava('should handle declarations added without raw properties (compact)', handleRaws, {format: 'compact'});
+ava('should handle declarations added without raw properties (compressed)', handleRaws, {format: 'compressed'});

@@ -1,5 +1,4 @@
-'use strict';
-
+import {block as commentRegex} from 'comment-regex';
 import postcss from 'postcss';
 import defined from 'defined';
 import deeplyNested from './deeplyNested';
@@ -8,8 +7,6 @@ import longest from './longest';
 import {maxAtRuleLength, maxSelectorLength, maxValueLength} from './maxSelectorLength';
 import prefixedDecls from './prefixedDecls';
 import space from './space';
-import assign from 'object-assign';
-import {block as commentRegex} from 'comment-regex';
 import sameLine from './sameLine';
 import isHexColor from './isHexColor';
 
@@ -268,7 +265,9 @@ function applyExpanded (css, opts) {
         }
         maxSelectorLength(rule, opts);
         if (rule.type === 'atrule') {
-            if (rule.params) { rule.raws.afterName = ' '; }
+            if (rule.params) {
+                rule.raws.afterName = ' ';
+            }
             maxAtRuleLength(rule, opts);
         }
         if (rule.type === 'decl') {
@@ -312,7 +311,7 @@ function applyTransformFeatures (rule, opts) {
 }
 
 let perfectionist = postcss.plugin('perfectionist', opts => {
-    opts = assign({
+    opts = {
         format: 'expanded',
         indentSize: 4,
         maxAtRuleLength: 80,
@@ -320,8 +319,10 @@ let perfectionist = postcss.plugin('perfectionist', opts => {
         maxValueLength: 80,
         cascade: true,
         colorCase: 'lower',
-        colorShorthand: true
-    }, opts);
+        colorShorthand: true,
+        ...opts
+    };
+
     return css => {
         css.walk(node => {
             if (node.raws.before) {
@@ -329,15 +330,16 @@ let perfectionist = postcss.plugin('perfectionist', opts => {
             }
         });
         switch (opts.format) {
-            case 'compact':
-                applyCompact(css, opts);
-                break;
-            case 'compressed':
-                applyCompressed(css);
-                break;
-            case 'expanded':
-                applyExpanded(css, opts);
-                break;
+        case 'compact':
+            applyCompact(css, opts);
+            break;
+        case 'compressed':
+            applyCompressed(css);
+            break;
+        case 'expanded':
+        default:
+            applyExpanded(css, opts);
+            break;
         }
     };
 });

@@ -1,8 +1,8 @@
-'use strict';
+import vendors from 'vendors';
 
-let prefixes = ['-webkit-', '-moz-', '-ms-', '-o-'];
+const prefixes = vendors.map(vendor => `-${vendor}-`);
 
 export default function prefixedDeclarations (rule) {
-    let prefix = node => prefixes.some(p => node.prop && !node.prop.indexOf(p));
+    const prefix = node => prefixes.some(p => node.prop && !node.prop.indexOf(p));
     return rule.nodes.filter(prefix);
 }

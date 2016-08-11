@@ -1,5 +1,3 @@
-'use strict';
-
 export default function deeplyNested ({nodes}) {
-    return nodes && nodes.some(({nodes}) => nodes);
+    return nodes && nodes.some(({nodes: children}) => children);
 }
