@@ -79,7 +79,7 @@ h1 {
 Type: `string`
 Default: `lower`
 
-Set either `lower` or `upper` to transform hexadecimal colors to according case.
+Set either `lower` or `upper` to transform hexadecimal colors to the according case.
 
 ```css
 /* lower */
@@ -94,7 +94,7 @@ p { color: #c8c8c8 }
 Type: `boolean`
 Default: `true`
 
-Set `true` to shorten hexadecimal colors.
+Set this to `true` to shorten hexadecimal colors.
 
 ```css
 /* true */

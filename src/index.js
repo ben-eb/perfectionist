@@ -293,15 +293,21 @@ function applyExpanded (css, opts) {
 
 function applyTransformFeatures (rule, opts) {
     // hexadecimal color transformations
+    if (rule.type !== 'decl') {
+        return;
+    }
     const isColor = isHexColor(rule.value);
-    if (opts.colorCase && rule.type === 'decl' && isColor) {
+    if (!isColor) {
+        return;
+    }
+    if (opts.colorCase) {
         if (opts.colorCase === 'lower') {
             rule.value = rule.value.toLowerCase();
         } else if (opts.colorCase === 'upper') {
             rule.value = rule.value.toUpperCase();
         }
     }
-    if (opts.colorShorthand && rule.type === 'decl' && isColor) {
+    if (opts.colorShorthand) {
         if (opts.colorShorthand === true) {
             rule.value = rule.value.replace(/#([A-Fa-f0-9])\1([A-Fa-f0-9])\2([A-Fa-f0-9])\3/i, '#$1$2$3');
         } else {
