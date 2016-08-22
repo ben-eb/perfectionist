@@ -8,6 +8,7 @@ import {maxAtRuleLength, maxSelectorLength, maxValueLength} from './maxSelectorL
 import prefixedDecls from './prefixedDecls';
 import space from './space';
 import sameLine from './sameLine';
+import isHexColor from './isHexColor';
 
 let unprefix = postcss.vendor.unprefixed;
 
@@ -89,7 +90,7 @@ function applyCompact (css, opts) {
 
             // Format `!important`
             if (rule.important) {
-                rule.raws.important = " !important";
+                rule.raws.important = ' !important';
             }
 
             // Format `!default`, `!global` and more similar values.
@@ -100,6 +101,8 @@ function applyCompact (css, opts) {
             if (rule.raws.value) {
                 rule.raws.value.raw = rule.value;
             }
+
+            applyTransformFeatures(rule, opts);
         }
         opts.indentSize = 1;
         if (rule.type === 'comment') {
@@ -185,7 +188,7 @@ function applyExpanded (css, opts) {
 
             // Format `!important`
             if (rule.important) {
-                rule.raws.important = " !important";
+                rule.raws.important = ' !important';
             }
 
             // Format `!default`, `!global` and more similar values.
@@ -196,6 +199,8 @@ function applyExpanded (css, opts) {
             if (rule.raws.value) {
                 rule.raws.value.raw = rule.value;
             }
+
+            applyTransformFeatures(rule, opts);
         }
         let indent = getIndent(rule, opts.indentSize);
         if (rule.type === 'comment') {
@@ -286,6 +291,31 @@ function applyExpanded (css, opts) {
     css.raws.after = '\n';
 }
 
+function applyTransformFeatures (rule, opts) {
+    // hexadecimal color transformations
+    if (rule.type !== 'decl') {
+        return;
+    }
+    const isColor = isHexColor(rule.value);
+    if (!isColor) {
+        return;
+    }
+    if (opts.colorCase) {
+        if (opts.colorCase === 'lower') {
+            rule.value = rule.value.toLowerCase();
+        } else if (opts.colorCase === 'upper') {
+            rule.value = rule.value.toUpperCase();
+        }
+    }
+    if (opts.colorShorthand) {
+        if (opts.colorShorthand === true) {
+            rule.value = rule.value.replace(/#([A-Fa-f0-9])\1([A-Fa-f0-9])\2([A-Fa-f0-9])\3/i, '#$1$2$3');
+        } else {
+            rule.value = rule.value.replace(/^#([A-Fa-f0-9])([A-Fa-f0-9])([A-Fa-f0-9])$/i, '#$1$1$2$2$3$3');
+        }
+    }
+}
+
 const perfectionist = postcss.plugin('perfectionist', opts => {
     opts = {
         format: 'expanded',
@@ -294,8 +324,11 @@ const perfectionist = postcss.plugin('perfectionist', opts => {
         maxSelectorLength: 80,
         maxValueLength: 80,
         cascade: true,
+        colorCase: 'lower',
+        colorShorthand: true,
         ...opts,
     };
+
     return css => {
         css.walk(node => {
             if (node.raws.before) {

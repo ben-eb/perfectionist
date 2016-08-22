@@ -60,22 +60,48 @@ Default: `true`
 Set this to `false` to disable visual cascading of vendor prefixed properties.
 Note that this transform only applies to the `expanded` format.
 
-###### `true`
-
 ```css
+/* true */
 h1 {
     -webkit-border-radius: 12px;
             border-radius: 12px;
 }
-```
 
-###### `false`
-
-```css
+/* false */
 h1 {
     -webkit-border-radius: 12px;
     border-radius: 12px;
 }
+```
+
+##### colorCase
+
+Type: `string`
+Default: `lower`
+
+Set either `lower` or `upper` to transform hexadecimal colors to the according case.
+
+```css
+/* lower */
+p { color: #C8C8C8 }
+
+/* upper */
+p { color: #c8c8c8 }
+```
+
+##### colorShorthand
+
+Type: `boolean`
+Default: `true`
+
+Set this to `true` to shorten hexadecimal colors.
+
+```css
+/* true */
+p { color: #fff }
+
+/* false */
+p { color: #ffffff }
 ```
 
 ##### format

@@ -4,9 +4,9 @@ import perfectionist from '../';
 import {name} from '../../package.json';
 
 function usage (t, instance) {
-    const input = 'h1 { color: #ffffff }';
+    const input = 'h1 { color: #fff }';
     return instance.process(input).then(({css}) => {
-        t.deepEqual(css, 'h1 {\n    color: #ffffff;\n}\n', 'should be consumed');
+        t.deepEqual(css, 'h1 {\n    color: #fff;\n}\n', 'should be consumed');
     });
 }
 
