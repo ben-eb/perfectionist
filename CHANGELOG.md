@@ -1,3 +1,7 @@
+# 2.2.0
+
+* Add options to format hex colours (thanks to @vansosnin).
+
 # 2.1.4
 
 * Replaced internal vendor prefixes list with the vendors module.
