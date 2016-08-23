@@ -292,27 +292,30 @@ function applyExpanded (css, opts) {
 }
 
 function applyTransformFeatures (rule, opts) {
-    // hexadecimal color transformations
     if (rule.type !== 'decl') {
         return;
     }
+
+    // hexadecimal color transformations
     const isColor = isHexColor(rule.value);
-    if (!isColor) {
-        return;
-    }
-    if (opts.colorCase) {
+    if (isColor && opts.colorCase) {
         if (opts.colorCase === 'lower') {
             rule.value = rule.value.toLowerCase();
         } else if (opts.colorCase === 'upper') {
             rule.value = rule.value.toUpperCase();
         }
     }
-    if (opts.colorShorthand) {
+    if (isColor && opts.colorShorthand) {
         if (opts.colorShorthand === true) {
             rule.value = rule.value.replace(/#([A-Fa-f0-9])\1([A-Fa-f0-9])\2([A-Fa-f0-9])\3/i, '#$1$2$3');
         } else {
             rule.value = rule.value.replace(/^#([A-Fa-f0-9])([A-Fa-f0-9])([A-Fa-f0-9])$/i, '#$1$1$2$2$3$3');
         }
+    }
+
+    // zeros transformations
+    if (opts.zeroLengthNoUnit && opts.zeroLengthNoUnit === true) {
+        rule.value = rule.value.replace(/^0[\.0]*(?:px|r?em|ex|ch|vh|vw|cm|mm|in|pt|pc|vmin|vmax)/g, '0');
     }
 }
 
@@ -326,6 +329,7 @@ const perfectionist = postcss.plugin('perfectionist', opts => {
         cascade: true,
         colorCase: 'lower',
         colorShorthand: true,
+        zeroLengthNoUnit: true,
         ...opts,
     };
 

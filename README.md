@@ -198,7 +198,7 @@ This loads the [postcss-scss](https://github.com/postcss/postcss-scss) plugin.
 ##### zeroLengthNoUnit
 
 Type: `boolean`
-Default: `false`
+Default: `true`
 
 Set this to `true` to trim units after zero length.
 
