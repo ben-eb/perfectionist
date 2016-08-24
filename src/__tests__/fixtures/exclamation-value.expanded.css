@@ -2,7 +2,7 @@ $border: 1px solid rgba(68, 120, 10, .5);
 $color: #f80;
 
 .foo {
-    color: rgba(170, 136, 153, 0.6) !important;
+    color: rgba(170, 136, 153, .6) !important;
     display: inline-block !default;
     position: absolute !global;
     left: 20px !foooo;
