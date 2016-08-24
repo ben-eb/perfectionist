@@ -124,7 +124,7 @@ format.
 ##### trimLeadingZero
 
 Type: `boolean`
-Default: `false`
+Default: `true`
 
 Set this to `true` to trim leading zero for fractional numbers less than 1.
 
