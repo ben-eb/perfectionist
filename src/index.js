@@ -308,7 +308,7 @@ function applyTransformFeatures (rule, opts) {
     if (isColor && opts.colorShorthand) {
         if (opts.colorShorthand === true) {
             rule.value = rule.value.replace(/#([A-Fa-f0-9])\1([A-Fa-f0-9])\2([A-Fa-f0-9])\3/i, '#$1$2$3');
-        } else {
+        } else if (opts.colorShorthand === false) {
             rule.value = rule.value.replace(/^#([A-Fa-f0-9])([A-Fa-f0-9])([A-Fa-f0-9])$/i, '#$1$1$2$2$3$3');
         }
     }
@@ -316,6 +316,11 @@ function applyTransformFeatures (rule, opts) {
     // zeros transformations
     if (opts.zeroLengthNoUnit && opts.zeroLengthNoUnit === true) {
         rule.value = rule.value.replace(/^0[\.0]*(?:px|r?em|ex|ch|vh|vw|cm|mm|in|pt|pc|vmin|vmax)/g, '0');
+    }
+    if (opts.trimLeadingZero === true) {
+        rule.value = rule.value.replace(/(0)(\.[\d]+)/g, '$2');
+    } else if (opts.trimLeadingZero === false) {
+        rule.value = rule.value.replace(/([\s]*)(\.[\d]+)/g, '$10$2');
     }
 }
 
@@ -326,6 +331,7 @@ const perfectionist = postcss.plugin('perfectionist', opts => {
         maxAtRuleLength: 80,
         maxSelectorLength: 80,
         maxValueLength: 80,
+        trimLeadingZero: true,
         cascade: true,
         colorCase: 'lower',
         colorShorthand: true,
