@@ -139,7 +139,7 @@ p { line-height: 0.8 }
 ##### trimTrailingZeros
 
 Type: `boolean`
-Default: `false`
+Default: `true`
 
 Set this to `true` to traim trailing zeros in numbers.
 
