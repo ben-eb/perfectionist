@@ -1,51 +1,30 @@
-import child from 'child_process';
 import path from 'path';
-import fs from 'fs';
+import {readFileSync as read} from 'fs';
 import ava from 'ava';
+import execa from 'execa';
 
-let read = fs.readFileSync;
-let fixture = path.join(__dirname, './fixtures/nested.fixture.css');
+const fixture = path.join(__dirname, './fixtures/nested.fixture.css');
 
 function setup (args) {
-    return new Promise(resolve => {
-        process.chdir(__dirname);
-
-        let ps = child.spawn(process.execPath, [
-            path.resolve(__dirname, '../../bin/cmd.js'),
-        ].concat(args));
-
-        let out = '';
-        let err = '';
-
-        ps.stdout.on('data', buffer => (out += buffer));
-        ps.stderr.on('data', buffer => (err += buffer));
-
-        ps.on('exit', code => {
-            resolve([err, out, code]);
-        });
-    });
+    process.chdir(__dirname);
+    return execa(path.resolve(__dirname, '../../bin/cmd.js'), args, {stripEof: false});
 }
 
 ava('cli: defaults', t => {
-    return setup([fixture]).then(([err, out, code]) => {
-        t.falsy(err, 'should not error');
-        t.falsy(code, 'should exit with code 0');
-        t.deepEqual(out, read('./fixtures/nested.expanded.css', 'utf-8'), 'should transform the css');
+    return setup([fixture]).then(({stdout}) => {
+        t.deepEqual(stdout, read('./fixtures/nested.expanded.css', 'utf-8'), 'should transform the css');
     });
 });
 
 ava('cli: formatter', t => {
-    return setup([fixture, '--format', 'compressed']).then(([err, out, code]) => {
-        t.falsy(err, 'should not error');
-        t.falsy(code, 'should exit with code 0');
-        t.deepEqual(out, read('./fixtures/nested.compressed.css', 'utf-8'), 'should transform the css');
+    return setup([fixture, '--format', 'compressed']).then(({stdout}) => {
+        t.deepEqual(stdout, read('./fixtures/nested.compressed.css', 'utf-8'), 'should transform the css');
     });
 });
 
 ava('cli: sourcemaps', t => {
-    return setup([fixture, '--sourcemap']).then(([err, out]) => {
-        t.falsy(err);
-        const hasMap = /sourceMappingURL=data:application\/json;base64/.test(out);
+    return setup([fixture, '--sourcemap']).then(({stdout}) => {
+        const hasMap = /sourceMappingURL=data:application\/json;base64/.test(stdout);
         t.truthy(hasMap, 'should generate a sourcemap');
     });
 });
