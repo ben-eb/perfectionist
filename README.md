@@ -121,6 +121,36 @@ Default: `4`
 This number will be used as a basis for all indent levels, using the `expanded`
 format.
 
+##### trimLeadingZero
+
+Type: `boolean`
+Default: `true`
+
+Set this to `true` to trim leading zero for fractional numbers less than 1.
+
+```css
+/* true */
+p { line-height: .8 }
+
+/* false */
+p { line-height: 0.8 }
+```
+
+##### trimTrailingZeros
+
+Type: `boolean`
+Default: `true`
+
+Set this to `true` to traim trailing zeros in numbers.
+
+```css
+/* true */
+div { top: 50px }
+
+/* false */
+div { top: 50.000px }
+```
+
 ##### maxAtRuleLength
 
 Type: `boolean|number`
@@ -164,6 +194,21 @@ Type: `string`
 
 Specify `scss` if you would like to also format SCSS-style single line comments.
 This loads the [postcss-scss](https://github.com/postcss/postcss-scss) plugin.
+
+##### zeroLengthNoUnit
+
+Type: `boolean`
+Default: `true`
+
+Set this to `true` to trim units after zero length.
+
+```css
+/* true */
+div { padding: 0 }
+
+/* false */
+div { padding: 0px }
+```
 
 ### `postcss([ perfectionist(opts) ])`
 
