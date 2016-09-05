@@ -1,3 +1,8 @@
+# 2.3.0
+
+* Add options to handle zeroes - trim leading/trailing zeroes, and removing
+  units from zero lengths (thanks to @vansosnin).
+
 # 2.2.0
 
 * Add options to format hex colours (thanks to @vansosnin).
