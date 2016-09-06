@@ -290,23 +290,27 @@ function applyExpanded (css, opts) {
     css.raws.after = '\n';
 }
 
+function toLowerCase (value) {
+    return value.toLowerCase();
+}
+
+function toUpperCase (value) {
+    return value.toUpperCase();
+}
+
 function applyTransformFeatures (rule, opts) {
     if (rule.type !== 'decl') {
         return;
     }
 
     // hexadecimal color transformations
-    const hexColorGroup = rule.value.match(/#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/g);
-    const hasColor = hexColorGroup !== null;
+    const hexColorRegex = /#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/g;
+    const hasColor = rule.value.match(hexColorRegex) !== null;
     if (hasColor && opts.colorCase) {
         if (opts.colorCase === 'lower') {
-            hexColorGroup.forEach(color => {
-                rule.value = rule.value.replace(color, color.toLowerCase());
-            });
+            rule.value = rule.value.replace(hexColorRegex, toLowerCase);
         } else if (opts.colorCase === 'upper') {
-            hexColorGroup.forEach(color => {
-                rule.value = rule.value.replace(color, color.toUpperCase());
-            });
+            rule.value = rule.value.replace(hexColorRegex, toUpperCase);
         }
     }
     if (hasColor && opts.colorShorthand) {
