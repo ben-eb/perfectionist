@@ -318,9 +318,9 @@ function applyTransformFeatures (rule, opts) {
         rule.value = rule.value.replace(/^0[\.0]*(?:px|r?em|ex|ch|vh|vw|cm|mm|in|pt|pc|vmin|vmax)/g, '0');
     }
     if (opts.trimLeadingZero === true) {
-        rule.value = rule.value.replace(/(\s|^)(0)(\.\d+)/g, '$1$3');
+        rule.value = rule.value.replace(/(\D|^)(0)(\.\d+)/g, '$1$3');
     } else if (opts.trimLeadingZero === false) {
-        rule.value = rule.value.replace(/(\s|^)(\.\d+)/g, '$10$2');
+        rule.value = rule.value.replace(/(\D|^)(\.\d+)/g, '$10$2');
     }
     if (opts.trimTrailingZeros === true) {
         rule.value = rule.value.replace(/(\d+)(\.[0-9]*[1-9]+)(0+)/g, '$1$2');
