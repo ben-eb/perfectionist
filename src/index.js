@@ -8,7 +8,6 @@ import {maxAtRuleLength, maxSelectorLength, maxValueLength} from './maxSelectorL
 import prefixedDecls from './prefixedDecls';
 import space from './space';
 import sameLine from './sameLine';
-import isHexColor from './isHexColor';
 
 let unprefix = postcss.vendor.unprefixed;
 
@@ -297,15 +296,20 @@ function applyTransformFeatures (rule, opts) {
     }
 
     // hexadecimal color transformations
-    const isColor = isHexColor(rule.value);
-    if (isColor && opts.colorCase) {
+    const hexColorGroup = rule.value.match(/#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/g);
+    const hasColor = hexColorGroup !== null;
+    if (hasColor && opts.colorCase) {
         if (opts.colorCase === 'lower') {
-            rule.value = rule.value.toLowerCase();
+            hexColorGroup.forEach(color => {
+                rule.value = rule.value.replace(color, color.toLowerCase());
+            });
         } else if (opts.colorCase === 'upper') {
-            rule.value = rule.value.toUpperCase();
+            hexColorGroup.forEach(color => {
+                rule.value = rule.value.replace(color, color.toUpperCase());
+            });
         }
     }
-    if (isColor && opts.colorShorthand) {
+    if (hasColor && opts.colorShorthand) {
         if (opts.colorShorthand === true) {
             rule.value = rule.value.replace(/#([A-Fa-f0-9])\1([A-Fa-f0-9])\2([A-Fa-f0-9])\3/i, '#$1$2$3');
         } else if (opts.colorShorthand === false) {
