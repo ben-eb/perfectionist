@@ -38,7 +38,7 @@
     "defined": "^1.0.0",
     "minimist": "^1.2.0",
     "postcss": "^5.0.8",
-    "postcss-scss": "^0.2.0",
+    "postcss-scss": "^0.3.0",
     "read-file-stdin": "^0.2.0",
     "string.prototype.repeat": "^0.2.0",
     "vendors": "^1.0.0",
