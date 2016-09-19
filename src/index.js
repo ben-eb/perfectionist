@@ -323,8 +323,8 @@ function applyTransformFeatures (rule, opts) {
         rule.value = rule.value.replace(/(\s|^)(\.\d+)/g, '$10$2');
     }
     if (opts.trimTrailingZeros === true) {
-        rule.value = rule.value.replace(/(\d+)(\.[0-9]*[1-9]+)(0+)/g, '$1$2');
-        rule.value = rule.value.replace(/(\d+)(\.0+)/g, '$1');
+        rule.value = rule.value.replace(/(\d+)(\.[0-9]*[1-9])0*(.*)/g, '$1$2$3');
+        rule.value = rule.value.replace(/(?=.*?\.)(.*[1-9])(?!.*?\.)(0*)(.*)/, '$1$3');
     }
 }
 
