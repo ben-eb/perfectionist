@@ -19,7 +19,7 @@ function blank (value) {
     return defined(value, '');
 }
 
-function applyCompressed (css) {
+function applyCompressed (css, opts) {
     css.walk(rule => {
         rule.raws.semicolon = false;
         if (rule.type === 'comment' && rule.raws.inline) {
@@ -47,7 +47,6 @@ function applyCompressed (css) {
             rule.value = rule.value.replace(/\(\s*/g, '(');
             rule.value = rule.value.replace(/\s*\)/g, ')');
 
-
             // Format `!important`
             if (rule.important) {
                 rule.raws.important = '!important';
@@ -61,6 +60,8 @@ function applyCompressed (css) {
             if (rule.raws.value) {
                 rule.raws.value.raw = rule.value;
             }
+
+            applyTransformFeatures(rule, opts);
         }
     });
     // Remove final newline
@@ -363,7 +364,7 @@ const perfectionist = postcss.plugin('perfectionist', opts => {
             applyCompact(css, opts);
             break;
         case 'compressed':
-            applyCompressed(css);
+            applyCompressed(css, opts);
             break;
         case 'expanded':
         default:
