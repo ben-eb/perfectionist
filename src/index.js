@@ -9,10 +9,10 @@ import prefixedDecls from './prefixedDecls';
 import space from './space';
 import sameLine from './sameLine';
 
-let unprefix = postcss.vendor.unprefixed;
+const {unprefixed} = postcss.vendor;
 
-function isSassVariable (decl) {
-    return decl.parent.type === 'root' && decl.prop.match(/^\$/);
+function isSassVariable ({parent, prop}) {
+    return parent.type === 'root' && prop.match(/^\$/);
 }
 
 function blank (value) {
@@ -242,14 +242,14 @@ function applyExpanded (css, opts) {
         if (opts.cascade && rule.type === 'rule' && rule.nodes.length > 1) {
             let props = [];
             let prefixed = prefixedDecls(rule).sort(longest).filter(({prop}) => {
-                let base = unprefix(prop);
+                let base = unprefixed(prop);
                 if (!~props.indexOf(base)) {
                     return props.push(base);
                 }
                 return false;
             });
             prefixed.forEach(prefix => {
-                let base = unprefix(prefix.prop);
+                let base = unprefixed(prefix.prop);
                 let vendor = prefix.prop.replace(base, '').length;
                 rule.nodes.filter(({prop}) => prop && ~prop.indexOf(base)).forEach(decl => {
                     let thisVendor = decl.prop.replace(base, '').length;
