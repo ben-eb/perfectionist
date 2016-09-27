@@ -1,43 +1,93 @@
-function toLowerCase (value) {
-    return value.toLowerCase();
+import valueParser, {unit} from 'postcss-value-parser';
+
+function isHex (node) {
+    if (node.value[0] !== '#') {
+        return false;
+    }
+    const range = node.value.slice(1);
+    return ~[3, 4, 6, 8].indexOf(range.length) && !isNaN(parseInt(range, 16));
 }
 
-function toUpperCase (value) {
-    return value.toUpperCase();
+function toShorthand (hex) {
+    if (
+        hex.length === 7 &&
+        hex[1] === hex[2] &&
+        hex[3] === hex[4] &&
+        hex[5] === hex[6]
+    ) {
+        return '#' + hex[2] + hex[4] + hex[6];
+    }
+    return hex;
 }
+
+function toLonghand (hex) {
+    if (hex.length !== 4) {
+        return hex;
+    }
+
+    const r = hex[1];
+    const g = hex[2];
+    const b = hex[3];
+    return '#' + r + r + g + g + b + b;
+};
+
+const lengths = [
+    'px',
+    'em',
+    'rem',
+    'ex',
+    'ch',
+    'vh',
+    'vw',
+    'cm',
+    'mm',
+    'in',
+    'pt',
+    'pc',
+    'vmin',
+    'vmax',
+];
 
 export default function applyTransformFeatures (decl, opts) {
-    // hexadecimal color transformations
-    const hexColorRegex = /#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/g;
-    const hasColor = decl.value.match(hexColorRegex) !== null;
-    if (hasColor && opts.colorCase) {
-        if (opts.colorCase === 'upper') {
-            decl.value = decl.value.replace(hexColorRegex, toUpperCase);
-        } else {
-            decl.value = decl.value.replace(hexColorRegex, toLowerCase);
+    decl.value = valueParser(decl.value).walk(node => {
+        if (node.type !== 'word') {
+            return;
         }
-    }
-    if (hasColor && typeof opts.colorShorthand === 'boolean') {
-        if (opts.colorShorthand === true) {
-            decl.value = decl.value.replace(/#([A-Fa-f0-9])\1([A-Fa-f0-9])\2([A-Fa-f0-9])\3/i, '#$1$2$3');
-        } else {
-            decl.value = decl.value.replace(/^#([A-Fa-f0-9])([A-Fa-f0-9])([A-Fa-f0-9])$/i, '#$1$1$2$2$3$3');
+        if (isHex(node)) {
+            if (opts.colorCase === 'upper') {
+                node.value = node.value.toUpperCase();
+            }
+            if (opts.colorCase === 'lower') {
+                node.value = node.value.toLowerCase();
+            }
+            if (opts.colorShorthand === true) {
+                node.value = toShorthand(node.value);
+            }
+            if (opts.colorShorthand === false) {
+                node.value = toLonghand(node.value);
+            }
         }
-    }
+        const pair = unit(node.value);
+        if (pair) {
+            const number = Number(pair.number);
+            if (
+                opts.zeroLengthNoUnit === true &&
+                ~lengths.indexOf(pair.unit.toLowerCase()) &&
+                number === 0
+            ) {
+                node.value = '0';
+            }
 
-    // zeros transformations
-    if (opts.zeroLengthNoUnit && opts.zeroLengthNoUnit === true) {
-        decl.value = decl.value.replace(/^0[\.0]*(?:px|r?em|ex|ch|vh|vw|cm|mm|in|pt|pc|vmin|vmax)/g, '0');
-    }
+            if (opts.trimLeadingZero === true) {
+                node.value = node.value.replace(/(\D|^)(0)(\.\d+)/g, '$1$3');
+            } else {
+                node.value = node.value.replace(/(\D|^)(\.\d+)/g, '$10$2');
+            }
 
-    if (opts.trimLeadingZero === true) {
-        decl.value = decl.value.replace(/(\D|^)(0)(\.\d+)/g, '$1$3');
-    } else {
-        decl.value = decl.value.replace(/(\D|^)(\.\d+)/g, '$10$2');
-    }
-
-    if (opts.trimTrailingZeros === true) {
-        decl.value = decl.value.replace(/(\d+)(\.[0-9]*[1-9]+)(0+)/g, '$1$2');
-        decl.value = decl.value.replace(/(\d+)(\.0+)/g, '$1');
-    }
+            if (opts.trimTrailingZeros === true) {
+                node.value = node.value.replace(/(\d+)(\.[0-9]*[1-9]+)(0+)/g, '$1$2');
+                node.value = node.value.replace(/(\d+)(\.0+)/g, '$1');
+            }
+        }
+    }).toString();
 }

@@ -17,7 +17,7 @@
 }
 
 #square1 {
-    background-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect fill="#00b1ff" width="100" height="100"/></svg>');
+    background-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect fill="#00B1FF" width="100" height="100"/></svg>');
 }
 
 #square2 {
@@ -29,7 +29,7 @@
 }
 
 #square4 {
-    background-image: url(data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect fill="#00b1ff" width="100" height="100"/></svg>);
+    background-image: url(data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect fill="#00B1FF" width="100" height="100"/></svg>);
 }
 
 #square5 {
