@@ -8,7 +8,6 @@ import {maxAtRuleLength, maxSelectorLength, maxValueLength} from './maxSelectorL
 import prefixedDecls from './prefixedDecls';
 import space from './space';
 import sameLine from './sameLine';
-import isHexColor from './isHexColor';
 
 let unprefix = postcss.vendor.unprefixed;
 
@@ -20,7 +19,7 @@ function blank (value) {
     return defined(value, '');
 }
 
-function applyCompressed (css) {
+function applyCompressed (css, opts) {
     css.walk(rule => {
         rule.raws.semicolon = false;
         if (rule.type === 'comment' && rule.raws.inline) {
@@ -48,7 +47,6 @@ function applyCompressed (css) {
             rule.value = rule.value.replace(/\(\s*/g, '(');
             rule.value = rule.value.replace(/\s*\)/g, ')');
 
-
             // Format `!important`
             if (rule.important) {
                 rule.raws.important = '!important';
@@ -62,6 +60,8 @@ function applyCompressed (css) {
             if (rule.raws.value) {
                 rule.raws.value.raw = rule.value;
             }
+
+            applyTransformFeatures(rule, opts);
         }
     });
     // Remove final newline
@@ -291,21 +291,30 @@ function applyExpanded (css, opts) {
     css.raws.after = '\n';
 }
 
+function toLowerCase (value) {
+    return value.toLowerCase();
+}
+
+function toUpperCase (value) {
+    return value.toUpperCase();
+}
+
 function applyTransformFeatures (rule, opts) {
     if (rule.type !== 'decl') {
         return;
     }
 
     // hexadecimal color transformations
-    const isColor = isHexColor(rule.value);
-    if (isColor && opts.colorCase) {
+    const hexColorRegex = /#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/g;
+    const hasColor = rule.value.match(hexColorRegex) !== null;
+    if (hasColor && opts.colorCase) {
         if (opts.colorCase === 'lower') {
-            rule.value = rule.value.toLowerCase();
+            rule.value = rule.value.replace(hexColorRegex, toLowerCase);
         } else if (opts.colorCase === 'upper') {
-            rule.value = rule.value.toUpperCase();
+            rule.value = rule.value.replace(hexColorRegex, toUpperCase);
         }
     }
-    if (isColor && opts.colorShorthand) {
+    if (hasColor && opts.colorShorthand) {
         if (opts.colorShorthand === true) {
             rule.value = rule.value.replace(/#([A-Fa-f0-9])\1([A-Fa-f0-9])\2([A-Fa-f0-9])\3/i, '#$1$2$3');
         } else if (opts.colorShorthand === false) {
@@ -318,9 +327,9 @@ function applyTransformFeatures (rule, opts) {
         rule.value = rule.value.replace(/^0[\.0]*(?:px|r?em|ex|ch|vh|vw|cm|mm|in|pt|pc|vmin|vmax)/g, '0');
     }
     if (opts.trimLeadingZero === true) {
-        rule.value = rule.value.replace(/(\s|^)(0)(\.\d+)/g, '$1$3');
+        rule.value = rule.value.replace(/(\D|^)(0)(\.\d+)/g, '$1$3');
     } else if (opts.trimLeadingZero === false) {
-        rule.value = rule.value.replace(/(\s|^)(\.\d+)/g, '$10$2');
+        rule.value = rule.value.replace(/(\D|^)(\.\d+)/g, '$10$2');
     }
     if (opts.trimTrailingZeros === true) {
         rule.value = rule.value.replace(/(\d+)(\.[0-9]*[1-9]+)(0+)/g, '$1$2');
@@ -355,7 +364,7 @@ const perfectionist = postcss.plugin('perfectionist', opts => {
             applyCompact(css, opts);
             break;
         case 'compressed':
-            applyCompressed(css);
+            applyCompressed(css, opts);
             break;
         case 'expanded':
         default:
