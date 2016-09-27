@@ -22,6 +22,11 @@ let tests = [{
     expected: 'h1 {\n    color: #ffffff;\n}\n',
     options: {colorShorthand: false},
 }, {
+    message: 'should expand shorthand hex',
+    fixture: 'h1{color:#ffffff}',
+    expected: 'h1 {\n    color: #ffffff;\n}\n',
+    options: {colorShorthand: false},
+}, {
     message: 'should not remove units from zero lengths',
     fixture: 'h1{width:0px}',
     expected: 'h1 {\n    width: 0px;\n}\n',
