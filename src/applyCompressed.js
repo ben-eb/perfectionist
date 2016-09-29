@@ -1,46 +1,64 @@
 import {block as commentRegex} from 'comment-regex';
+import valueParser from 'postcss-value-parser';
 import applyTransformFeatures from './applyTransformFeatures';
 import isSassVariable from './isSassVariable';
+import walk from './walk';
 
 export default function applyCompressed (css, opts) {
     css.walk(rule => {
+        const {raws, type} = rule;
         rule.raws.semicolon = false;
-        if (rule.type === 'comment' && rule.raws.inline) {
+        if (type === 'comment' && raws.inline) {
             rule.raws.inline = null;
         }
-        if (rule.type === 'rule' || rule.type === 'atrule') {
+        if (type === 'rule' || type === 'atrule') {
             rule.raws.between = rule.raws.after = '';
         }
-        if (rule.type === 'decl' && !commentRegex().test(rule.raws.between)) {
+        if (type === 'decl' && !commentRegex().test(raws.between)) {
             rule.raws.between = ':';
         }
         if (rule.type === 'decl') {
-            if (rule.raws.value) {
-                rule.value = rule.raws.value.raw.trim();
-            }
-            // Format sass variable `$size: 30em;`
-            if (isSassVariable(rule)) {
-                rule.raws.before = '';
-                rule.raws.between = ':';
-                rule.value = rule.value.trim().replace(/\s+/g, ' ');
+            if (raws.value) {
+                rule.value = raws.value.raw.trim();
             }
 
-            // Remove spaces before commas and keep only one space after.
-            rule.value = rule.value.replace(/(\s+)?,(\s)*/g, ',');
-            rule.value = rule.value.replace(/\(\s*/g, '(');
-            rule.value = rule.value.replace(/\s*\)/g, ')');
+            const ast = valueParser(rule.value);
+
+            walk(ast, (node, index, parent) => {
+                const next = parent.nodes[index + 1];
+                if (node.type === 'div' && node.value === ',' || node.type === 'function') {
+                    node.before = node.after = '';
+                }
+                if (node.type === 'space') {
+                    node.value = ' ';
+                    if (next.type === 'word' && next.value[0] === '!') {
+                        node.value = '';
+                    }
+                }
+                if (
+                    node.type === 'word' &&
+                    node.value === '!' &&
+                    parent.nodes[index + 2] &&
+                    next.type === 'space' &&
+                    parent.nodes[index + 2].type === 'word'
+                ) {
+                    next.type = 'word';
+                    next.value = '';
+                }
+            });
+
+            rule.value = ast.toString();
+
+            if (isSassVariable(rule)) {
+                rule.raws.before = '';
+            }
 
             // Format `!important`
             if (rule.important) {
                 rule.raws.important = '!important';
             }
 
-            // Format `!default`, `!global` and more similar values.
-            if (rule.value.match(/\s*!\s*(\w+)\s*$/i) !== null) {
-                rule.value = rule.value.replace(/\s*!\s*(\w+)\s*$/i, '!$1');
-            }
-
-            if (rule.raws.value) {
+            if (raws.value) {
                 rule.raws.value.raw = rule.value;
             }
 
