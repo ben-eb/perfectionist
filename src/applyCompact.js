@@ -1,10 +1,12 @@
 import {block as commentRegex} from 'comment-regex';
+import valueParser from 'postcss-value-parser';
 import applyTransformFeatures from './applyTransformFeatures';
 import blank from './blank';
 import deeplyNested from './deeplyNested';
 import getIndent from './getIndent';
 import isSassVariable from './isSassVariable';
 import {maxSelectorLength} from './maxSelectorLength';
+import walk from './walk';
 
 export default function applyCompact (css, opts) {
     css.walk(rule => {
@@ -16,24 +18,39 @@ export default function applyCompact (css, opts) {
             if (isSassVariable(rule)) {
                 rule.raws.before = '';
                 rule.raws.between = ': ';
-                rule.value = rule.value.trim().replace(/\s+/g, ' ');
             }
 
-            // Remove spaces before commas and keep only one space after.
-            rule.value = rule.value.replace(/(\s*,\s*)(?=(?:[^"']|['"][^"']*["'])*$)/g, ', ');
-            rule.value = rule.value.replace(/\(\s*/g, '( ');
-            rule.value = rule.value.replace(/\s*\)/g, ' )');
-            // Remove space after comma in data-uri
-            rule.value = rule.value.replace(/(data:([a-z]+\/[a-z0-9\-\+]+(;[a-z\-]+\=[a-z0-9\-]+)?)?(;base64)?,)\s+/g, '$1');
+            const ast = valueParser(rule.value);
+
+            walk(ast, (node, index, parent) => {
+                const next = parent.nodes[index + 1];
+                if (node.type === 'div' && node.value === ',') {
+                    node.before = '';
+                    node.after = ' ';
+                }
+                if (node.type === 'function') {
+                    node.before = node.after = ' ';
+                }
+                if (node.type === 'space') {
+                    node.value = ' ';
+                }
+                if (
+                    node.type === 'word' &&
+                    node.value === '!' &&
+                    parent.nodes[index + 2] &&
+                    next.type === 'space' &&
+                    parent.nodes[index + 2].type === 'word'
+                ) {
+                    next.type = 'word';
+                    next.value = '';
+                }
+            });
+
+            rule.value = ast.toString();
 
             // Format `!important`
             if (rule.important) {
                 rule.raws.important = ' !important';
-            }
-
-            // Format `!default`, `!global` and more similar values.
-            if (rule.value.match(/\s*!\s*(\w+)\s*$/i) !== null) {
-                rule.value = rule.value.replace(/\s*!\s*(\w+)\s*$/i, ' !$1');
             }
 
             if (rule.raws.value) {
