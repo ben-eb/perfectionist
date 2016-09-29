@@ -1,4 +1,5 @@
 import postcss from 'postcss';
+import valueParser from 'postcss-value-parser';
 import {block as commentRegex} from 'comment-regex';
 import applyTransformFeatures from './applyTransformFeatures';
 import blank from './blank';
@@ -9,14 +10,16 @@ import {maxAtRuleLength, maxSelectorLength, maxValueLength} from './maxSelectorL
 import prefixedDecls from './prefixedDecls';
 import space from './space';
 import sameLine from './sameLine';
+import walk from './walk';
 
 const {unprefixed} = postcss.vendor;
 
 export default function applyExpanded (css, opts) {
     css.walk(rule => {
-        if (rule.type === 'decl') {
-            if (rule.raws.value) {
-                rule.value = rule.raws.value.raw.trim();
+        const {raws, type} = rule;
+        if (type === 'decl') {
+            if (raws.value) {
+                rule.value = raws.value.raw.trim();
             }
             // Format sass variable `$size: 30em;`
             if (isSassVariable(rule)) {
@@ -26,32 +29,47 @@ export default function applyExpanded (css, opts) {
                 rule.raws.between = ': ';
             }
 
-            rule.value = rule.value.trim().replace(/\s+/g, ' ');
-            // Remove spaces before commas and keep only one space after.
-            rule.value = rule.value.replace(/(\s*,\s*)(?=(?:[^"']|['"][^"']*["'])*$)/g, ', ');
-            rule.value = rule.value.replace(/\(\s*/g, '(');
-            rule.value = rule.value.replace(/\s*\)/g, ')');
-            // Remove space after comma in data-uri
-            rule.value = rule.value.replace(/(data:([a-z]+\/[a-z0-9\-\+]+(;[a-z\-]+\=[a-z0-9\-]+)?)?(;base64)?,)\s+/g, '$1');
+            const ast = valueParser(rule.value);
+
+            walk(ast, (node, index, parent) => {
+                const next = parent.nodes[index + 1];
+                if (node.type === 'function') {
+                    node.before = node.after = '';
+                }
+                if (node.type === 'div' && node.value === ',') {
+                    node.before = '';
+                    node.after = ' ';
+                }
+                if (node.type === 'space') {
+                    node.value = ' ';
+                }
+                if (
+                    node.type === 'word' &&
+                    node.value === '!' &&
+                    parent.nodes[index + 2] &&
+                    next.type === 'space' &&
+                    parent.nodes[index + 2].type === 'word'
+                ) {
+                    next.type = 'word';
+                    next.value = '';
+                }
+            });
+
+            rule.value = ast.toString();
 
             // Format `!important`
             if (rule.important) {
                 rule.raws.important = ' !important';
             }
 
-            // Format `!default`, `!global` and more similar values.
-            if (rule.value.match(/\s*!\s*(\w+)\s*$/i) !== null) {
-                rule.value = rule.value.replace(/\s*!\s*(\w+)\s*$/i, ' !$1');
-            }
-
-            if (rule.raws.value) {
+            if (raws.value) {
                 rule.raws.value.raw = rule.value;
             }
 
             applyTransformFeatures(rule, opts);
         }
         let indent = getIndent(rule, opts.indentSize);
-        if (rule.type === 'comment') {
+        if (type === 'comment') {
             let prev = rule.prev();
             if (prev && prev.type === 'decl') {
                 if (sameLine(prev, rule)) {
@@ -75,7 +93,7 @@ export default function applyExpanded (css, opts) {
             return;
         }
         rule.raws.before = indent + blank(rule.raws.before);
-        if (rule.type === 'rule' || rule.type === 'atrule') {
+        if (type === 'rule' || type === 'atrule') {
             if (!rule.nodes) {
                 rule.raws.between = '';
             } else {
@@ -87,7 +105,7 @@ export default function applyExpanded (css, opts) {
             }
         }
         // visual cascade of vendor prefixed properties
-        if (opts.cascade && rule.type === 'rule' && rule.nodes.length > 1) {
+        if (opts.cascade && type === 'rule' && rule.nodes.length > 1) {
             let props = [];
             let prefixed = prefixedDecls(rule).sort(longest).filter(({prop}) => {
                 let base = unprefixed(prop);
@@ -108,17 +126,17 @@ export default function applyExpanded (css, opts) {
                 });
             });
         }
-        if (rule.raws.selector && rule.raws.selector.raw) {
+        if (raws.selector && raws.selector.raw) {
             rule.selector = rule.raws.selector.raw;
         }
         maxSelectorLength(rule, opts);
-        if (rule.type === 'atrule') {
+        if (type === 'atrule') {
             if (rule.params) {
                 rule.raws.afterName = ' ';
             }
             maxAtRuleLength(rule, opts);
         }
-        if (rule.type === 'decl') {
+        if (type === 'decl') {
             if (!commentRegex().test(rule.raws.between)) {
                 rule.raws.between = ': ';
             }
@@ -128,8 +146,8 @@ export default function applyExpanded (css, opts) {
             rule.raws.before = '\n' + blank(rule.raws.before);
             rule.raws.after = '\n' + indent;
         }
-        if (rule.parent && rule !== rule.parent.first && (rule.type === 'rule' || rule.type === 'atrule')) {
-            if (rule.type === 'atrule' && !rule.nodes) {
+        if (rule.parent && rule !== rule.parent.first && (type === 'rule' || type === 'atrule')) {
+            if (type === 'atrule' && !rule.nodes) {
                 rule.raws.before = '\n' + indent;
                 return;
             }
