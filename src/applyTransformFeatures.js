@@ -1,4 +1,4 @@
-import valueParser, {unit} from 'postcss-value-parser';
+import {unit} from 'postcss-value-parser';
 
 function isHex (node) {
     if (node.value[0] !== '#') {
@@ -48,46 +48,41 @@ const lengths = [
     'vmax',
 ];
 
-export default function applyTransformFeatures (decl, opts) {
-    decl.value = valueParser(decl.value).walk(node => {
-        if (node.type !== 'word') {
-            return;
+export default function applyTransformFeatures (node, opts) {
+    if (isHex(node)) {
+        if (opts.colorCase === 'upper') {
+            node.value = node.value.toUpperCase();
         }
-        if (isHex(node)) {
-            if (opts.colorCase === 'upper') {
-                node.value = node.value.toUpperCase();
-            }
-            if (opts.colorCase === 'lower') {
-                node.value = node.value.toLowerCase();
-            }
-            if (opts.colorShorthand === true) {
-                node.value = toShorthand(node.value);
-            }
-            if (opts.colorShorthand === false) {
-                node.value = toLonghand(node.value);
-            }
+        if (opts.colorCase === 'lower') {
+            node.value = node.value.toLowerCase();
         }
-        const pair = unit(node.value);
-        if (pair) {
-            const number = Number(pair.number);
-            if (
-                opts.zeroLengthNoUnit === true &&
-                ~lengths.indexOf(pair.unit.toLowerCase()) &&
-                number === 0
-            ) {
-                node.value = '0';
-            }
+        if (opts.colorShorthand === true) {
+            node.value = toShorthand(node.value);
+        }
+        if (opts.colorShorthand === false) {
+            node.value = toLonghand(node.value);
+        }
+    }
+    const pair = unit(node.value);
+    if (pair) {
+        const number = Number(pair.number);
+        if (
+            opts.zeroLengthNoUnit === true &&
+            ~lengths.indexOf(pair.unit.toLowerCase()) &&
+            number === 0
+        ) {
+            node.value = '0';
+        }
 
-            if (opts.trimLeadingZero === true) {
-                node.value = node.value.replace(/(\D|^)(0)(\.\d+)/g, '$1$3');
-            } else {
-                node.value = node.value.replace(/(\D|^)(\.\d+)/g, '$10$2');
-            }
-
-            if (opts.trimTrailingZeros === true) {
-                node.value = node.value.replace(/(\d+)(\.[0-9]*[1-9]+)(0+)/g, '$1$2');
-                node.value = node.value.replace(/(\d+)(\.0+)/g, '$1');
-            }
+        if (opts.trimLeadingZero === true) {
+            node.value = node.value.replace(/(\D|^)(0)(\.\d+)/g, '$1$3');
+        } else {
+            node.value = node.value.replace(/(\D|^)(\.\d+)/g, '$10$2');
         }
-    }).toString();
+
+        if (opts.trimTrailingZeros === true) {
+            node.value = node.value.replace(/(\d+)(\.[0-9]*[1-9]+)(0+)/g, '$1$2');
+            node.value = node.value.replace(/(\d+)(\.0+)/g, '$1');
+        }
+    }
 }

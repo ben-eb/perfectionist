@@ -44,6 +44,9 @@ export default function applyCompact (css, opts) {
                     next.type = 'word';
                     next.value = '';
                 }
+                if (node.type === 'word') {
+                    applyTransformFeatures(node, opts);
+                }
             });
 
             rule.value = ast.toString();
@@ -56,8 +59,6 @@ export default function applyCompact (css, opts) {
             if (rule.raws.value) {
                 rule.raws.value.raw = rule.value;
             }
-
-            applyTransformFeatures(rule, opts);
         }
         opts.indentSize = 1;
         if (rule.type === 'comment') {

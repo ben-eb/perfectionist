@@ -53,6 +53,9 @@ export default function applyExpanded (css, opts) {
                     next.type = 'word';
                     next.value = '';
                 }
+                if (node.type === 'word') {
+                    applyTransformFeatures(node, opts);
+                }
             });
 
             rule.value = ast.toString();
@@ -65,8 +68,6 @@ export default function applyExpanded (css, opts) {
             if (raws.value) {
                 rule.raws.value.raw = rule.value;
             }
-
-            applyTransformFeatures(rule, opts);
         }
         let indent = getIndent(rule, opts.indentSize);
         if (type === 'comment') {
