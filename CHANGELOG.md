@@ -1,3 +1,15 @@
+# 2.3.1
+
+* Better handling of trailing/leading zeroes & hex colour case transformations
+  (thanks to @vansosnin).
+* Now parses values rather than applying regular expressions to values, using
+  postcss-value-parser.
+* Resolves an issue where fractions were being incorrectly transformed.
+* Resolves an issue where parentheses inside string literals were being
+  erroneously transformed.
+* Resolves an issue where base64 content was being incorrectly transformed
+  to lower case.
+
 # 2.3.0
 
 * Add options to handle zeroes - trim leading/trailing zeroes, and removing
