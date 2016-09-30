@@ -65,24 +65,32 @@ export default function applyTransformFeatures (node, opts) {
     }
     const pair = unit(node.value);
     if (pair) {
-        const number = Number(pair.number);
         if (
             opts.zeroLengthNoUnit === true &&
             ~lengths.indexOf(pair.unit.toLowerCase()) &&
-            number === 0
+            Number(pair.number) === 0
         ) {
             node.value = '0';
+            return;
         }
 
-        if (opts.trimLeadingZero === true) {
-            node.value = node.value.replace(/(\D|^)(0)(\.\d+)/g, '$1$3');
-        } else {
-            node.value = node.value.replace(/(\D|^)(\.\d+)/g, '$10$2');
+        const parts = pair.number.split('.');
+        let pre = parts[0];
+        let post = parts.slice(1).join('.');
+
+        if (opts.trimLeadingZero === true && parts[1]) {
+            pre = pre.replace(/^0+/, '');
+        } else if (opts.trimLeadingZero === false && !pre.length) {
+            pre = 0;
         }
 
-        if (opts.trimTrailingZeros === true) {
-            node.value = node.value.replace(/(\d+)(\.[0-9]*[1-9]+)(0+)/g, '$1$2');
-            node.value = node.value.replace(/(\d+)(\.0+)/g, '$1');
+        if (opts.trimTrailingZeros === true && parts[1]) {
+            const rounded = String(Number(pre + '.' + post)).split('.')[1];
+            post = rounded ? '.' + rounded : '';
+        } else if (opts.trimTrailingZeros === false && parts[1]) {
+            post = '.' + parts[1];
         }
+
+        node.value = pre + post + pair.unit;
     }
 }
