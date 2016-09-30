@@ -32,8 +32,8 @@ let tests = [{
     expected: 'h1 {\n    width: 0px;\n}\n',
     options: {zeroLengthNoUnit: false},
 }, {
-    message: 'should not trim leading zeroes',
-    fixture: 'h1{width:0.5px}',
+    message: 'should add leading zeroes',
+    fixture: 'h1{width:.5px}',
     expected: 'h1 {\n    width: 0.5px;\n}\n',
     options: {trimLeadingZero: false},
 }, {
