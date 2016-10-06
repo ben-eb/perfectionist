@@ -2,6 +2,7 @@ import postcss from 'postcss';
 import applyCompact from './applyCompact';
 import applyCompressed from './applyCompressed';
 import applyExpanded from './applyExpanded';
+import applyVerticalAlign from './applyVerticalAlign';
 
 const perfectionist = postcss.plugin('perfectionist', opts => {
     opts = {
@@ -31,6 +32,9 @@ const perfectionist = postcss.plugin('perfectionist', opts => {
             break;
         case 'compressed':
             applyCompressed(css, opts);
+            break;
+        case 'vertical-align':
+            applyVerticalAlign(css, opts);
             break;
         case 'expanded':
         default:
