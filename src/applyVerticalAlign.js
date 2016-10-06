@@ -98,7 +98,7 @@ export default function applyVerticalAlign (css, opts) {
             if (!rule.nodes) {
                 rule.raws.between = '';
             } else {
-                rule.raws.between = '\n';
+                rule.raws.between = '\n' + indent;
             }
             rule.raws.semicolon = true;
             if (rule.nodes) {
