@@ -80,7 +80,7 @@ export default function applyCompact (css, opts) {
             }
             return;
         }
-        let indent = getIndent(rule, opts.indentSize);
+        let indent = getIndent(rule, opts.indentChar, opts.indentSize);
         let deep = deeplyNested(rule);
         if (rule.type === 'rule' || rule.type === 'atrule') {
             if (!rule.nodes) {

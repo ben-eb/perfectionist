@@ -50,7 +50,7 @@ export function maxSelectorLength (rule, opts) {
         max: opts.maxSelectorLength,
         reduce: true, // where possible reduce to one line
         reindent: function (r) {
-            return getIndent(r, opts.indentSize).length;
+            return getIndent(r, opts.indentChar, opts.indentSize).length;
         },
     });
 }
