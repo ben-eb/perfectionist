@@ -7,6 +7,7 @@ const perfectionist = postcss.plugin('perfectionist', opts => {
     opts = {
         format: 'expanded',
         indentSize: 4,
+        indentChar: ' ',
         maxAtRuleLength: 80,
         maxSelectorLength: 80,
         maxValueLength: 80,

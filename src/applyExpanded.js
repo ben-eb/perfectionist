@@ -69,7 +69,7 @@ export default function applyExpanded (css, opts) {
                 rule.raws.value.raw = rule.value;
             }
         }
-        let indent = getIndent(rule, opts.indentSize);
+        let indent = getIndent(rule, opts.indentChar, opts.indentSize);
         if (type === 'comment') {
             let prev = rule.prev();
             if (prev && prev.type === 'decl') {
