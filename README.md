@@ -82,10 +82,10 @@ Default: `lower`
 Set either `lower` or `upper` to transform hexadecimal colors to the according case.
 
 ```css
-/* lower */
+/* upper */
 p { color: #C8C8C8 }
 
-/* upper */
+/* lower */
 p { color: #c8c8c8 }
 ```
 
