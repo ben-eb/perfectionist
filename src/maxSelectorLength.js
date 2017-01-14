@@ -55,15 +55,15 @@ export function maxSelectorLength (rule, opts) {
     });
 }
 
-export function maxValueLength (rule, {maxValueLength: max}) {
+export function maxValueLength (rule, opts) {
     if (rule.raws.value && rule.raws.value.raw) {
         rule.value = rule.raws.value.raw;
     }
     return splitProperty(rule, 'value', {
-        max,
+        max: opts.maxValueLength,
         breakEvery: true,
         reindent: function (r) {
-            return getIndent(r).length + r.prop.length + 2;
+            return getIndent(r, opts.indentSize).length + r.prop.length + 2;
         },
     });
 }
