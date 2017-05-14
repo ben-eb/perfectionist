@@ -1,20 +1,18 @@
 import postcss from 'postcss';
-import valueParser from 'postcss-value-parser';
 import {block as commentRegex} from 'comment-regex';
-import applyTransformFeatures from './applyTransformFeatures';
 import blank from './blank';
 import getIndent from './getIndent';
-import isSassVariable from './isSassVariable';
 import longest from './longest';
 import {maxAtRuleLength, maxSelectorLength, maxValueLength} from './maxSelectorLength';
 import prefixedDecls from './prefixedDecls';
 import space from './space';
-import sameLine from './sameLine';
-import walk from './walk';
+import formatDeclaration from './formatDeclaration';
+import formatComment from './formatComment';
 
 const {unprefixed} = postcss.vendor;
 
 export default function applyExpanded (css, opts) {
+    // remove whitespace & semicolons from beginning
     css.walk(rule => {
         if (rule.raws.before) {
             rule.raws.before = rule.raws.before.replace(/[;\s]/g, '');
@@ -24,82 +22,17 @@ export default function applyExpanded (css, opts) {
     css.walk(rule => {
         const {raws, type} = rule;
         if (type === 'decl') {
-            if (raws.value) {
-                rule.value = raws.value.raw.trim();
-            }
-            // Format sass variable `$size: 30em;`
-            if (isSassVariable(rule)) {
-                if (rule !== css.first) {
-                    rule.raws.before = '\n';
-                }
-                rule.raws.between = ': ';
-            }
-
-            const ast = valueParser(rule.value);
-
-            walk(ast, (node, index, parent) => {
-                const next = parent.nodes[index + 1];
-                if (node.type === 'function') {
-                    node.before = node.after = '';
-                }
-                if (node.type === 'div' && node.value === ',') {
-                    node.before = '';
-                    node.after = ' ';
-                }
-                if (node.type === 'space') {
-                    node.value = ' ';
-                }
-                if (
-                    node.type === 'word' &&
-                    node.value === '!' &&
-                    parent.nodes[index + 2] &&
-                    next.type === 'space' &&
-                    parent.nodes[index + 2].type === 'word'
-                ) {
-                    next.type = 'word';
-                    next.value = '';
-                }
-                if (node.type === 'word') {
-                    applyTransformFeatures(node, opts);
-                }
-            });
-
-            rule.value = ast.toString();
-
-            // Format `!important`
-            if (rule.important) {
-                rule.raws.important = ' !important';
-            }
-
-            if (raws.value) {
-                rule.raws.value.raw = rule.value;
-            }
+            formatDeclaration(rule, opts, css);
         }
+
         let indent = getIndent(rule, opts.indentChar, opts.indentSize);
+
         if (type === 'comment') {
-            let prev = rule.prev();
-            if (prev && prev.type === 'decl') {
-                if (sameLine(prev, rule)) {
-                    rule.raws.before = ' ' + blank(rule.raws.before);
-                } else {
-                    rule.raws.before = '\n' + indent + blank(rule.raws.before);
-                }
-            }
-            if (!prev && rule !== css.first) {
-                rule.raws.before = '\n' + indent + blank(rule.raws.before);
-            }
-            if (rule.parent && rule.parent.type === 'root') {
-                let next = rule.next();
-                if (next) {
-                    next.raws.before = '\n\n';
-                }
-                if (rule !== css.first) {
-                    rule.raws.before = '\n\n';
-                }
-            }
+            formatComment(rule, opts, css);
             return;
         }
         rule.raws.before = indent + blank(rule.raws.before);
+
         if (type === 'rule' || type === 'atrule') {
             if (!rule.nodes) {
                 rule.raws.between = '';
@@ -111,6 +44,7 @@ export default function applyExpanded (css, opts) {
                 rule.raws.after = '\n';
             }
         }
+
         // visual cascade of vendor prefixed properties
         if (opts.cascade && type === 'rule' && rule.nodes.length > 1) {
             let props = [];
@@ -133,31 +67,40 @@ export default function applyExpanded (css, opts) {
                 });
             });
         }
+
         if (raws.selector && raws.selector.raw) {
             rule.selector = rule.raws.selector.raw;
         }
         maxSelectorLength(rule, opts);
+
+        // -> formatAtRule()   - common code w/ formatRule()
         if (type === 'atrule') {
             if (rule.params) {
                 rule.raws.afterName = ' ';
             }
             maxAtRuleLength(rule, opts);
         }
+
         if (type === 'decl') {
+            // ensure space following colon
             if (!commentRegex().test(rule.raws.between)) {
                 rule.raws.between = ': ';
             }
             maxValueLength(rule, opts);
         }
+
         if (rule.parent && rule.parent.type !== 'root') {
             rule.raws.before = '\n' + blank(rule.raws.before);
             rule.raws.after = '\n' + indent;
         }
+
+        // add newline before at-rules
         if (rule.parent && rule !== rule.parent.first && (type === 'rule' || type === 'atrule')) {
             if (type === 'atrule' && !rule.nodes) {
                 rule.raws.before = '\n' + indent;
                 return;
             }
+            // two newlines before blocks
             rule.raws.before = '\n\n' + indent;
         }
     });
