@@ -1,3 +1,9 @@
+# HEAD
+
+* Remove support for condensed & compact formatting
+* Remove support for "cascaded" vendor prefixes
+* Refactor applyExpanded (main algorithm) into smaller parts
+
 # 2.4.0
 
 * Adds support for tab indentation (thanks to @solidflows).

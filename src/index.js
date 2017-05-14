@@ -10,7 +10,6 @@ const perfectionist = postcss.plugin('perfectionist', opts => {
         maxValueLength: 80,
         trimLeadingZero: true,
         trimTrailingZeros: true,
-        cascade: true,
         colorCase: 'lower',
         colorShorthand: true,
         zeroLengthNoUnit: true,

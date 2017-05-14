@@ -1,15 +1,9 @@
-import postcss from 'postcss';
 import {block as commentRegex} from 'comment-regex';
 import blank from './blank';
 import getIndent from './getIndent';
-import longest from './longest';
 import {maxAtRuleLength, maxSelectorLength, maxValueLength} from './maxSelectorLength';
-import prefixedDecls from './prefixedDecls';
-import space from './space';
 import formatDeclaration from './formatDeclaration';
 import formatComment from './formatComment';
-
-const {unprefixed} = postcss.vendor;
 
 export default function applyExpanded (css, opts) {
     // remove whitespace & semicolons from beginning
@@ -25,12 +19,12 @@ export default function applyExpanded (css, opts) {
             formatDeclaration(rule, opts, css);
         }
 
-        let indent = getIndent(rule, opts.indentChar, opts.indentSize);
-
         if (type === 'comment') {
             formatComment(rule, opts, css);
             return;
         }
+
+        let indent = getIndent(rule, opts.indentChar, opts.indentSize);
         rule.raws.before = indent + blank(rule.raws.before);
 
         if (type === 'rule' || type === 'atrule') {
@@ -45,29 +39,7 @@ export default function applyExpanded (css, opts) {
             }
         }
 
-        // visual cascade of vendor prefixed properties
-        if (opts.cascade && type === 'rule' && rule.nodes.length > 1) {
-            let props = [];
-            let prefixed = prefixedDecls(rule).sort(longest).filter(({prop}) => {
-                let base = unprefixed(prop);
-                if (!~props.indexOf(base)) {
-                    return props.push(base);
-                }
-                return false;
-            });
-            prefixed.forEach(prefix => {
-                let base = unprefixed(prefix.prop);
-                let vendor = prefix.prop.replace(base, '').length;
-                rule.nodes.filter(({prop}) => prop && ~prop.indexOf(base)).forEach(decl => {
-                    let thisVendor = decl.prop.replace(base, '').length;
-                    let extraSpace = vendor - thisVendor;
-                    if (extraSpace > 0) {
-                        decl.raws.before = space(extraSpace) + blank(decl.raws.before);
-                    }
-                });
-            });
-        }
-
+        // preserve comments in selector (type === 'rule')
         if (raws.selector && raws.selector.raw) {
             rule.selector = rule.raws.selector.raw;
         }
