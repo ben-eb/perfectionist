@@ -1,11 +1,8 @@
 import postcss from 'postcss';
-import applyCompact from './applyCompact';
-import applyCompressed from './applyCompressed';
 import applyExpanded from './applyExpanded';
 
 const perfectionist = postcss.plugin('perfectionist', opts => {
     opts = {
-        format: 'expanded',
         indentSize: 4,
         indentChar: ' ',
         maxAtRuleLength: 80,
@@ -21,23 +18,7 @@ const perfectionist = postcss.plugin('perfectionist', opts => {
     };
 
     return css => {
-        css.walk(node => {
-            if (node.raws.before) {
-                node.raws.before = node.raws.before.replace(/[;\s]/g, '');
-            }
-        });
-        switch (opts.format) {
-        case 'compact':
-            applyCompact(css, opts);
-            break;
-        case 'compressed':
-            applyCompressed(css, opts);
-            break;
-        case 'expanded':
-        default:
-            applyExpanded(css, opts);
-            break;
-        }
+        applyExpanded(css, opts);
     };
 });
 

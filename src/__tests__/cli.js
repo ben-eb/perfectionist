@@ -17,8 +17,8 @@ ava('cli: defaults', t => {
 });
 
 ava('cli: formatter', t => {
-    return setup([fixture, '--format', 'compressed']).then(({stdout}) => {
-        t.deepEqual(stdout, read('./fixtures/nested.compressed.css', 'utf-8'), 'should transform the css');
+    return setup([fixture, '--format', 'expanded']).then(({stdout}) => {
+        t.deepEqual(stdout, read('./fixtures/nested.expanded.css', 'utf-8'), 'should transform the css');
     });
 });
 

@@ -22,8 +22,8 @@ let specs = fs.readdirSync(base).reduce((tests, css) => {
 Object.keys(specs).forEach(name => {
     let spec = specs[name];
     ava(`fixture: ${name}`, t => {
-        t.plan(3);
-        Object.keys(spec).slice(0, 3).forEach(s => {
+        t.plan(1);
+        Object.keys(spec).slice(0, 1).forEach(s => {
             let result = perfectionist(spec.fixture, {format: s});
             t.deepEqual(result, spec[s], `should output the expected result (${s})`);
         });
@@ -40,8 +40,6 @@ const scss = (css, format) => {
 ava('should handle single line comments', t => {
     const input = 'h1{\n  // test \n  color: red;\n}\n';
     t.deepEqual(scss(input, 'expanded'), 'h1 {\n    // test \n    color: red;\n}\n');
-    t.deepEqual(scss(input, 'compact'), 'h1 {/* test */ color: red; }\n');
-    t.deepEqual(scss(input, 'compressed'), 'h1{/* test */color:red}');
 });
 
 ava('should handle single line comments in @import', t => {
@@ -68,5 +66,3 @@ function handleRaws (t, opts = {}) {
 }
 
 ava('should handle declarations added without raw properties (default)', handleRaws);
-ava('should handle declarations added without raw properties (compact)', handleRaws, {format: 'compact'});
-ava('should handle declarations added without raw properties (compressed)', handleRaws, {format: 'compressed'});

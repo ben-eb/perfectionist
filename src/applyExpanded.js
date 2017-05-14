@@ -16,6 +16,12 @@ const {unprefixed} = postcss.vendor;
 
 export default function applyExpanded (css, opts) {
     css.walk(rule => {
+        if (rule.raws.before) {
+            rule.raws.before = rule.raws.before.replace(/[;\s]/g, '');
+        }
+    });
+
+    css.walk(rule => {
         const {raws, type} = rule;
         if (type === 'decl') {
             if (raws.value) {

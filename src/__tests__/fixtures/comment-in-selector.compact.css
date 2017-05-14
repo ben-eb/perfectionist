@@ -1,5 +1,0 @@
-/* 4 selectors + 2 comments + 3 selectors */
-.selectorA, .selectorB, .selectorC, .selectorX,
-/* comment 1 */
-/* comment 2 */
-.selectorD, .selectorE, .selectorF { color: white; }
