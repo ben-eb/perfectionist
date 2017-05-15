@@ -1,11 +1,10 @@
 import valueParser from 'postcss-value-parser';
-// import {block as commentRegex} from 'comment-regex';
+import {block as commentRegex} from 'comment-regex';
 import applyTransformFeatures from './applyTransformFeatures';
 import isSassVariable from './isSassVariable';
-// import {maxSelectorLength, maxValueLength} from './maxSelectorLength';
+import {maxValueLength} from './maxSelectorLength';
 import walk from './walk';
-// import blank from './blank';
-// import getIndent from './getIndent';
+import setIndent from './setIndent';
 
 export default function formatDeclaration (rule, opts, css) {
     const {raws} = rule;
@@ -59,4 +58,12 @@ export default function formatDeclaration (rule, opts, css) {
     if (raws.value) {
         rule.raws.value.raw = rule.value;
     }
+
+    // ensure space following colon
+    if (!commentRegex().test(rule.raws.between)) {
+        rule.raws.between = ': ';
+    }
+    maxValueLength(rule, opts);
+
+    setIndent(rule, opts);
 };
