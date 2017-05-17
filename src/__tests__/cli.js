@@ -1,7 +1,6 @@
 import path from 'path';
-import {readFileSync as read} from 'fs';
-import ava from 'ava';
 import execa from 'execa';
+/* global test, expect */
 
 const fixture = path.join(__dirname, './fixtures/nested.fixture.css');
 
@@ -10,21 +9,21 @@ function setup (args) {
     return execa(path.resolve(__dirname, '../../bin/cmd.js'), args, {stripEof: false});
 }
 
-ava('cli: defaults', t => {
+test('cli: defaults', () => {
     return setup([fixture]).then(({stdout}) => {
-        t.deepEqual(stdout, read('./fixtures/nested.expanded.css', 'utf-8'), 'should transform the css');
+        expect(stdout).toMatchSnapshot();
     });
 });
 
-ava('cli: formatter', t => {
+test('cli: formatter', () => {
     return setup([fixture, '--format', 'expanded']).then(({stdout}) => {
-        t.deepEqual(stdout, read('./fixtures/nested.expanded.css', 'utf-8'), 'should transform the css');
+        expect(stdout).toMatchSnapshot();
     });
 });
 
-ava('cli: sourcemaps', t => {
+test('cli: sourcemaps', () => {
     return setup([fixture, '--sourcemap']).then(({stdout}) => {
         const hasMap = /sourceMappingURL=data:application\/json;base64/.test(stdout);
-        t.truthy(hasMap, 'should generate a sourcemap');
+        expect(hasMap).toBeTruthy();
     });
 });

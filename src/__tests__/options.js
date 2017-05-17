@@ -1,5 +1,5 @@
-import ava from 'ava';
 import plugin from '../';
+/* global test, expect */
 
 let tests = [{
     message: 'should have a configurable indent size',
@@ -52,8 +52,8 @@ function perfectionist (css, options) {
     return plugin.process(css, options).css;
 }
 
-ava('perfectionist options', (t) => {
+test('perfectionist options', () => {
     tests.forEach(({fixture, expected, options}) => {
-        t.deepEqual(perfectionist(fixture, options || {}), expected);
+        expect(perfectionist(fixture, options || {})).toEqual(expected);
     });
 });

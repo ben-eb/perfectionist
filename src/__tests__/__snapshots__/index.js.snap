@@ -1,0 +1,362 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`fixture: block-comment 1`] = `
+"/*! normalize.css v3.0.2 | MIT License | git.io/normalize */
+
+/**
+ * 1. Set default font family to sans-serif.
+ * 2. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    font-family: sans-serif;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+}
+
+/**
+ * Remove default margin.
+ */
+
+body {
+    margin: 0;
+}
+"
+`;
+
+exports[`fixture: border-and-shadow 1`] = `
+"h1 {
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
+    border-radius: 12px;
+    -webkit-box-shadow: 0 1px 3px black;
+    -moz-box-shadow: 0 1px 3px black;
+    box-shadow: 0 1px 3px black;
+}
+"
+`;
+
+exports[`fixture: border-radius 1`] = `
+"h1 {
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
+    border-radius: 12px;
+}
+"
+`;
+
+exports[`fixture: box-shadow 1`] = `
+"h1 {
+    box-shadow: 0 1px 3px black, 1px 0 6px red;
+}
+"
+`;
+
+exports[`fixture: braces-in-content 1`] = `
+"h1:before {
+    content: \\"(\\";
+}
+
+h1:after {
+    content: \\")\\";
+}
+"
+`;
+
+exports[`fixture: color-case 1`] = `
+"p {
+    color: #aa93fe;
+    background: #fff url(/ImagesDir/loader.gif) center center no-repeat;
+}
+"
+`;
+
+exports[`fixture: color-shorthand 1`] = `
+"p {
+    color: #a8e;
+    box-shadow: 0 0 5px 0 #ccc;
+}
+"
+`;
+
+exports[`fixture: comment-between 1`] = `
+".selector {
+    color: /*[[placeholder]]*/ white;
+}
+"
+`;
+
+exports[`fixture: comment-eol 1`] = `
+"html {
+    font-family: sans-serif; /* 1 */
+    -ms-text-size-adjust: 100%; /* 2 */
+    -webkit-text-size-adjust: 100%; /* 2 */
+}
+"
+`;
+
+exports[`fixture: comment-in-selector 1`] = `
+"/* 4 selectors + 2 comments + 3 selectors */
+
+.selectorA, .selectorB, .selectorC, .selectorX,
+/* comment 1 */
+/* comment 2 */
+.selectorD, .selectorE, .selectorF {
+    color: white;
+}
+"
+`;
+
+exports[`fixture: comment-newline 1`] = `
+"h1 {
+    color: black;
+    /*     ^^^^^^ */
+}
+"
+`;
+
+exports[`fixture: comments-in-values 1`] = `
+"h1 {
+    margin: 10px /* top/bottom */ 20px /* right/left */;
+}
+"
+`;
+
+exports[`fixture: ending-comment 1`] = `
+".selector {
+    color: white;
+}
+
+/* comment */
+"
+`;
+
+exports[`fixture: exclamation-value 1`] = `
+"$border: 1px solid rgba(68, 120, 10, .5);
+$color: #f80;
+
+.foo {
+    color: rgba(170, 136, 153, .6) !important;
+    display: inline-block !default;
+    position: absolute !global;
+    left: 20px !foooo;
+}
+"
+`;
+
+exports[`fixture: flex-order 1`] = `
+".box {
+    -ms-flex-order: 1;
+    -webkit-order: 1;
+    order: 1;
+}
+"
+`;
+
+exports[`fixture: font-face 1`] = `
+"@font-face {
+    src: url(\\"webfont.eot\\");
+    src: url(\\"webfont.eot?#iefix\\") format(\\"embedded-opentype\\"),
+         url(\\"webfont.woff2\\") format(\\"woff2\\"),
+         url(\\"webfont.woff\\") format(\\"woff\\"),
+         url(\\"webfont.ttf\\") format(\\"truetype\\"),
+         url(\\"webfont.svg#svgFontName\\") format(\\"svg\\");
+}
+"
+`;
+
+exports[`fixture: handle-fractions 1`] = `
+".foo {
+    transform: scale(1.05);
+}
+"
+`;
+
+exports[`fixture: import 1`] = `
+"@import 'import-p-green.css';
+@import url(import-p-green.css);
+"
+`;
+
+exports[`fixture: large-media-query 1`] = `
+"@media only screen and (-o-min-device-pixel-ratio: 2/1),
+       only screen and (min--moz-device-pixel-ratio: 2),
+       only screen and (-moz-min-device-pixel-ratio: 2),
+       only screen and (-webkit-min-device-pixel-ratio: 2),
+       only screen and (min-resolution: 192dpi),
+       only screen and (min-resolution: 2dppx) {
+    .selector {
+        background-size: 30px 50px;
+    }
+}
+"
+`;
+
+exports[`fixture: long-selector 1`] = `
+"a, abbr, p, ul, ol, li, h1, h2, h3, h4, h5, h6, cite, blockquote, hr, div,
+section, article, span, time, code, pre, embed, object, body, aside, video,
+audio, header, footer, main, small, b, em, .hidden {
+    display: none;
+}
+"
+`;
+
+exports[`fixture: long-selector-media 1`] = `
+"@media all and (min-width: 480px) and (max-width: 767px) {
+    .selector 1, .selector 2, .selector 3, .selector 4, .selector 5, .selector 6,
+    .selector 7, .selector 8, .selector 9, .selector 10, .selector 11,
+    .selector 12, .selector 13, .selector 14, .selector 15, .selector 16,
+    .selector 17, .selector 18, .selector 19, .selector 20 {
+        background: #000;
+    }
+}
+"
+`;
+
+exports[`fixture: media-query 1`] = `
+"@media screen and (min-width: 500px) {
+    h1 {
+        color: navy;
+        background: #fff;
+        border-radius: 12px;
+    }
+
+    h2 {
+        text-decoration: underline;
+    }
+}
+"
+`;
+
+exports[`fixture: medium-media 1`] = `
+"@media only screen and (min-width: 500px),
+       only screen and (max-width: 800px),
+       only screen and (min-height: 500px) {
+    .selector {
+        height: 100%;
+    }
+}
+"
+`;
+
+exports[`fixture: multiline-selectors 1`] = `
+"h1, h2, h3 {
+    color: red;
+}
+"
+`;
+
+exports[`fixture: nested 1`] = `
+"h1 {
+    color: red;
+
+    & h2 {
+        color: yellow;
+
+        & h3 {
+            color: green;
+        }
+    }
+}
+"
+`;
+
+exports[`fixture: nested-media 1`] = `
+"@media (min-width: 992px) {
+    @media (max-width: 1200px) {
+        .container {
+            position: absolute;
+        }
+    }
+}
+
+.container-fluid {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+@media (min-width: 1200px) {
+    .container {
+        width: 1170px;
+    }
+}
+"
+`;
+
+exports[`fixture: quoted-image-url 1`] = `
+".double-quotes {
+    background-image: url(\\"data:image/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==\\");
+}
+
+.single-quotes {
+    background-image: url('data:image/gif;base64,R0lGODlhCgAKAIAAABoaGgAAACwAAAAACgAKAAACEYQdmYcaDNxjEspKndVZbc8UADs=');
+}
+
+.no-quotes {
+    background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7);
+}
+
+/* http://codepen.io/silverwind/pen/WQqVBa */
+
+#square0 {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCBmaWxsPSIjMDBCMUZGIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIvPjwvc3ZnPg==');
+}
+
+#square1 {
+    background-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"100\\" height=\\"100\\"><rect fill=\\"#00B1FF\\" width=\\"100\\" height=\\"100\\"/></svg>');
+}
+
+#square2 {
+    background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%3E%3Crect%20fill%3D%22%2300B1FF%22%20width%3D%22100%22%20height%3D%22100%22%2F%3E%3C%2Fsvg%3E');
+}
+
+#square3 {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCBmaWxsPSIjMDBCMUZGIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIvPjwvc3ZnPg==);
+}
+
+#square4 {
+    background-image: url(data:image/svg+xml;charset=utf-8,<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"100\\" height=\\"100\\"><rect fill=\\"#00B1FF\\" width=\\"100\\" height=\\"100\\"/></svg>);
+}
+
+#square5 {
+    background-image: url(data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%3E%3Crect%20fill%3D%22%2300B1FF%22%20width%3D%22100%22%20height%3D%22100%22%2F%3E%3C%2Fsvg%3E);
+}
+"
+`;
+
+exports[`fixture: simple 1`] = `
+"h1 {
+    color: navy;
+    font-size: 2em;
+    font-weight: normal;
+}
+
+h2 {
+    text-decoration: underline;
+}
+"
+`;
+
+exports[`fixture: trim-leading-zero 1`] = `
+"p {
+    transition: .4s cubic-bezier(.23, 1, .32, 1);
+}
+"
+`;
+
+exports[`fixture: trim-trailing-zeros 1`] = `
+"div {
+    top: 50px;
+}
+"
+`;
+
+exports[`fixture: zero-length-no-unit 1`] = `
+"div {
+    height: 0;
+}
+"
+`;

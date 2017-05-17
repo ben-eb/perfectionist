@@ -1,4 +1,4 @@
-export default function formatBlock (rule, opts) {
+export default function formatBlock (rule) {
     // space before opening brace;
     rule.raws.between = ' ';
     rule.raws.after = '\n';

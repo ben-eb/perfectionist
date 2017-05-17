@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`cli: defaults 1`] = `
+"h1 {
+    color: red;
+
+    & h2 {
+        color: yellow;
+
+        & h3 {
+            color: green;
+        }
+    }
+}
+"
+`;
+
+exports[`cli: formatter 1`] = `
+"h1 {
+    color: red;
+
+    & h2 {
+        color: yellow;
+
+        & h3 {
+            color: green;
+        }
+    }
+}
+"
+`;

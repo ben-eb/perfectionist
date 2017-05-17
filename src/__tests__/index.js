@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs';
-import ava from 'ava';
 import postcss from 'postcss';
 import plugin from '../';
+/* global test, expect */
 
 let base = path.join(__dirname, 'fixtures');
 
@@ -21,11 +21,11 @@ let specs = fs.readdirSync(base).reduce((tests, css) => {
 
 Object.keys(specs).forEach(name => {
     let spec = specs[name];
-    ava(`fixture: ${name}`, t => {
-        t.plan(1);
+    test(`fixture: ${name}`, () => {
+        expect.assertions(1);
         Object.keys(spec).slice(0, 1).forEach(s => {
             let result = perfectionist(spec.fixture, {format: s});
-            t.deepEqual(result, spec[s], `should output the expected result (${s})`);
+            expect(result).toMatchSnapshot();
         });
     });
 });
@@ -37,14 +37,14 @@ const scss = (css, format) => {
     }).css;
 };
 
-ava('should handle single line comments', t => {
+test('should handle single line comments', () => {
     const input = 'h1{\n  // test \n  color: red;\n}\n';
-    t.deepEqual(scss(input, 'expanded'), 'h1 {\n    // test \n    color: red;\n}\n');
+    expect(scss(input, 'expanded')).toEqual('h1 {\n    // test \n    color: red;\n}\n');
 });
 
-ava('should handle single line comments in @import', t => {
+test('should handle single line comments in @import', () => {
     const css = 'a, a:visited {\n    //@include border-radius(5px);\n    @include transition(background-color 0.2s ease);\n}\n';
-    t.deepEqual(scss(css), css);
+    expect(scss(css)).toEqual(css);
 });
 
 let ensureRed = postcss.plugin('ensure-red', () => {
@@ -59,10 +59,12 @@ let ensureRed = postcss.plugin('ensure-red', () => {
     };
 });
 
-function handleRaws (t, opts = {}) {
+function handleRaws (opts = {}) {
     return postcss([ensureRed, plugin(opts)]).process('h1 { color: blue }').then(({css}) => {
-        t.falsy(!!~css.indexOf('undefined'));
+        expect(!!~css.indexOf('undefined')).toBeFalsy();
     });
 }
 
-ava('should handle declarations added without raw properties (default)', handleRaws);
+test('should handle declarations added without raw properties (default)', (done) => {
+    handleRaws().then(done);
+});
